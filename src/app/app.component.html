@@ -350,10 +350,33 @@
 
   </div>
 
+
   <app-charts></app-charts>
+  <div class="checkboxFilter"></div>
+
   <h1>Proviamo un po' di richieste</h1>
   <button (click)="initValueFromBackend()">CLICCAMI</button>
-  <div >{{ initMap.FONTI}}</div>
-</div>
+  <section class="filters">
+    <section class="fonts-filter list-checkbox" >
+      <div *ngFor="let f of initMap.FONTI" class="inline">
+        <label class="input"><input type="checkbox" [class]="f.color"
+        [checked]="f.select"
+        [value]="f.name"
+        (change)="onChangeFonts($event)"
+
+        >{{f.name}}</label>
+      </div>
+    </section>
+    <section class="states-filter list-checkbox">
+      <div *ngFor="let s of initMap.STATI" class="inline">
+        <label class="input"><input type="checkbox" [class]="s.color"
+        [checked]="s.select"
+
+        [value]="s.name"
+        (change)="onChangeStates($event)"
+
+        >{{s.name}}</label>
+      </div>
+    </section>
 
 <router-outlet></router-outlet>
