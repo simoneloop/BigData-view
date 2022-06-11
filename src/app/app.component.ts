@@ -45,6 +45,7 @@ export class AppComponent {
 
   response:any;
   constructor(private http:HttpClient){}
+  tuttiGliStati="SELEZIONA TUTTI GLI STATI"
 
   ngOnInit(){
     this.initValueFromBackend()
@@ -58,11 +59,11 @@ export class AppComponent {
       this.initMap.START_TIME=this.response['start_time'][0];
       this.initMap.END_TIME=this.response['end_time'][0];
       this.initMap.FONTI=[]
-      this.initMap.FONTI.push({select:false,name:"TUTTE LE FONTI"},)
+      this.initMap.FONTI.push({select:false,name:"SELEZIONA TUTTE LE FONTI"},)
 
 
       this.initMap.STATI=[]
-      this.initMap.STATI.push({select:false,name:"TUTTI GLI STATI",color:"red"},)
+      this.initMap.STATI.push({select:false,name:"SELEZIONA TUTTI GLI STATI",color:"red"},)
 
       this.initMap.SOTTO_STATI=this.response['sotto_stati'];
         this.response['fonti'].forEach((element: string) => {
@@ -107,47 +108,72 @@ export class AppComponent {
     let isChecked:boolean;
 
     isChecked=$event.target.checked
-    if(name==="TUTTE LE FONTI" && isChecked){
-      this.initMap.FONTI=this.initMap.FONTI.map((f: { select: boolean; })=>{
-        f.select=true;
-        return f;
+    if(name==="SELEZIONA TUTTE LE FONTI" && isChecked){
+      this.initMap.FONTI=this.initMap.FONTI.map((s: {name:String, select: boolean; })=>{
+        s.select=true;
+
+
+        return s;
       })
-    }else{
-      this.initMap.FONTI= this.initMap.FONTI.map((f: { name: string; select: boolean; })=>{
+    }
+    else if(name==="SELEZIONA TUTTE LE FONTI" && !isChecked){
+      this.initMap.STFONTIATI=this.initMap.FONTI.map((s: {name:String, select: boolean; })=>{
+        s.select=false;
 
-        if(f.name===name){
-          f.select=isChecked;
-          return f
-        }
-        else if(f.name==="TUTTE LE FONTI"){
-          f.select=false;
+
+        return s;
+      })
+
+    }
+    else{
+
+      this.initMap.FONTI= this.initMap.FONTI.map((s: { name: string; select: boolean; })=>{
+
+        if(s.name===name){
+          s.select=isChecked;
+          this.initMap.FONTI=this.recap(this.initMap.FONTI);
+          return s
         }
 
-        return f;
+
+        return s;
       })
     }
 
   }
+
   onChangeStates($event: any){
     const name=$event.target.defaultValue
     let isChecked:boolean;
 
     isChecked=$event.target.checked
-    if(name==="TUTTI GLI STATI" && isChecked){
-      this.initMap.STATI=this.initMap.STATI.map((s: { select: boolean; })=>{
+    if(name==="SELEZIONA TUTTI GLI STATI" && isChecked){
+      this.initMap.STATI=this.initMap.STATI.map((s: {name:String, select: boolean; })=>{
         s.select=true;
+
+
         return s;
       })
-    }else{
+    }
+    else if(name==="SELEZIONA TUTTI GLI STATI" && !isChecked){
+      this.initMap.STATI=this.initMap.STATI.map((s: {name:String, select: boolean; })=>{
+        s.select=false;
+
+
+        return s;
+      })
+
+    }
+    else{
+
       this.initMap.STATI= this.initMap.STATI.map((s: { name: string; select: boolean; })=>{
 
         if(s.name===name){
           s.select=isChecked;
+          this.initMap.STATI=this.recap(this.initMap.STATI);
           return s
         }
-        else if(s.name==="TUTTI GLI STATI"){
-          s.select=false;
-        }
+
 
         return s;
       })
@@ -155,6 +181,27 @@ export class AppComponent {
 
   }
 
+recap(value: any){
+  let shouldAllSelected=value[0].select
+  if(shouldAllSelected){
+    let allSelected=true;
+    value.map((s:{name:string;select:boolean})=>{
+      if(!s.select){
+        allSelected=false;
+      }
+    })
+    value[0].select=allSelected;
+  }
+  else{
+    let allSelected=true;
+    value.map((s:{name:string;select:boolean})=>{
+      if(!s.select && (s.name!="SELEZIONA TUTTI GLI STATI"&&s.name!="SELEZIONA TUTTE LE FONTI")){
+        allSelected=false;
+      }
+    })
+    value[0].select=allSelected;
+  }
 
+}
 
 }

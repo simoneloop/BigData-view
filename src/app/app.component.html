@@ -359,7 +359,7 @@
   <section class="filters">
     <section class="fonts-filter list-checkbox" >
       <div *ngFor="let f of initMap.FONTI" class="inline">
-        <label class="input"><input type="checkbox" [class]="f.color"
+        <label class="input"><input  type="checkbox" [class]="f.color"
         [checked]="f.select"
         [value]="f.name"
         (change)="onChangeFonts($event)"
@@ -369,7 +369,7 @@
     </section>
     <section class="states-filter list-checkbox">
       <div *ngFor="let s of initMap.STATI" class="inline">
-        <label class="input"><input type="checkbox" [class]="s.color"
+        <label class="input"><input [id]="s.name" type="checkbox" [class]="s.color"
         [checked]="s.select"
 
         [value]="s.name"
