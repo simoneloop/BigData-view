@@ -105,3 +105,19 @@ input[type="checkbox"]{
 
   cursor: pointer;
 }
+
+.hide{
+  display: none;
+}
+
+.button{
+  background-color: #1976d2;
+  padding: 10px;
+  border-radius: 20px;
+  border: solid 1px white;
+  cursor: pointer;
+}
+.button span{
+  color: white;
+  font-weight: 600;
+}

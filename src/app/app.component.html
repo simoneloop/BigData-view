@@ -353,9 +353,9 @@
   <div class="checkboxFilter"></div>
 
   <h1>Proviamo un po' di richieste</h1>
-  <button (click)="clearGraph()">RIPULISCI</button>
+  <button (click)="clearGraph()" class="button"><span>RIPULISCI</span></button>
 
-  <section class="filters">
+  <section class="filters hide">
 
     <section class="fonts-filter list-checkbox" >
       <div *ngFor="let f of initMap.FONTI" class="inline">
@@ -386,5 +386,5 @@
 
     </section>
   </section>
-  <button class="submit-btn" (click)="mediaCarbone()">MEDIA CARBONE</button>
+  <button class="submit-btn"  class="button" (click)="mediaCarbone()"><span>MEDIA CARBONE</span></button>
 <router-outlet></router-outlet>

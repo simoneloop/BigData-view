@@ -102,7 +102,7 @@ export class AppComponent {
 
       this.running="running";
       document.getElementById("spark-icon")?.classList.add("spark-icon")
-
+      document.getElementsByClassName("filters")[0]?.classList.remove("hide")
     });
   }
 
