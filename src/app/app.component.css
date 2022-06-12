@@ -3,7 +3,24 @@
   display: flex;
   justify-content: center;
 }
-
+.github-icons{
+  padding: 10px;
+}
+.spark-icon{
+  fill: yellow;
+}
+.rounded{
+  background-color: red;
+  border-radius: 100px;
+  width: 85px;
+  height: 85px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.card span{
+  margin-left: 10px!important;
+}
 ::-webkit-scrollbar{
   width:0.5em;
 }
@@ -26,6 +43,24 @@
   border-radius: 5px;
 
 }
+.list-checkbox .radio{
+
+  border-bottom: groove;
+  padding: 1em;
+  border-radius: 10px;
+  margin: 1em;
+}
+.spaceBottom{
+  padding-bottom: 1em;
+}
+.first-radio{
+  padding-right: 4em;
+}
+.checkbox-title{
+  font-weight: 700;
+  accent-color: #f5f5f5;
+}
+
 .red {
   accent-color: #c60918;
 }
