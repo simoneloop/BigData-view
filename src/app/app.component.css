@@ -32,14 +32,14 @@
 }
 
 .list-checkbox{
-
+  width: -webkit-fill-available;
   box-shadow: 2px 2px #a3d7e5;
-
   max-height: 20em;
-  margin: 0em 5em 0em 5em;
+  height: fit-content;
+  margin: 0em 0em 0em 5em;
   overflow: auto;
   border: solid 1px gray;
-  padding: 15px;
+  padding: 1em 2em 1em 1em;
   border-radius: 5px;
 
 }
@@ -48,7 +48,7 @@
   border-bottom: groove;
   padding: 1em;
   border-radius: 10px;
-  margin: 1em;
+  margin: 0em 1em 1em 1em;
 }
 .spaceBottom{
   padding-bottom: 1em;
@@ -116,6 +116,7 @@ input[type="checkbox"]{
   border-radius: 20px;
   border: solid 1px white;
   cursor: pointer;
+  margin: 1em;
 }
 .button span{
   color: white;

@@ -385,6 +385,20 @@
       </div>
 
     </section>
+    <section class="time-slot-filter list-checkbox" >
+      <div *ngFor="let t of timeSlots" class="inline">
+        <label class="input" [class]="t.class"><input   type="checkbox"
+        [checked]="t.select"
+        [value]="t.name"
+        (change)="onChangeTimeSlots($event)"
+
+        >{{t.name}}</label>
+      </div>
+      <section class="datapicker-section">
+        <app-date-picker class="datapicker" (newEvent)="print($event)" [minDate]="initMap.START_TIME" [maxDate]="initMap.END_TIME"></app-date-picker>
+      </section>
+
+    </section>
   </section>
   <button class="submit-btn"  class="button" (click)="mediaCarbone()"><span>MEDIA CARBONE</span></button>
 <router-outlet></router-outlet>

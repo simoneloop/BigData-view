@@ -45,6 +45,7 @@ export class AppComponent {
 
   initMap: any={}
   running:string="not running";
+  timeSlots=[{select:true,name:'TUTTO IL GIORNO',class:"checkbox-title spaceBottom"},{select:true,name:'mattina'},{select:true,name:'pomeriggio'},{select:true,name:'sera'},{select:true,name:'notte'}]
 
 
   response:any;
@@ -65,8 +66,12 @@ export class AppComponent {
     let url=this.ROOT_URL+this.INIT
     this.http.get(url).subscribe(data => {
       this.response=data;
-      this.initMap.START_TIME=this.response['start_time'][0];
-      this.initMap.END_TIME=this.response['end_time'][0];
+      console.log(this.response)
+
+      this.initMap.START_TIME=new Date(Number(this.response['start_time'][0]) * 1000);
+      this.initMap.TIME_MILLIS=this.response['start_time'][0];
+      console.log(this.initMap.START_TIME)
+      this.initMap.END_TIME=new Date(Number(this.response['end_time'][0]) * 1000);
       this.initMap.FONTI=[]
       this.initMap.FONTI.push({select:false,name:"SELEZIONA TUTTE LE FONTI",color:"spaceBottom checkbox-title"},)
 
@@ -172,7 +177,7 @@ export class AppComponent {
       })
     }
     else if(name==="SELEZIONA TUTTE LE FONTI" && !isChecked){
-      this.initMap.STFONTIATI=this.initMap.FONTI.map((s: {name:String, select: boolean; })=>{
+      this.initMap.FONTI=this.initMap.FONTI.map((s: {name:String, select: boolean; })=>{
         s.select=false;
 
 
@@ -250,12 +255,13 @@ recap(value: any){
   else{
     let allSelected=true;
     value.map((s:{name:string;select:boolean})=>{
-      if(!s.select && (s.name!="SELEZIONA TUTTI GLI STATI"&&s.name!="SELEZIONA TUTTE LE FONTI")){
+      if(!s.select && (s.name!="SELEZIONA TUTTI GLI STATI"&&s.name!="SELEZIONA TUTTE LE FONTI"&&s.name!="TUTTO IL GIORNO")){
         allSelected=false;
       }
     })
     value[0].select=allSelected;
   }
+  return value;
 
 }
 
@@ -273,6 +279,45 @@ onChangeFormStates($event: any){
     this.sotto_stato_is_checked=false;
   }
 }
+onChangeTimeSlots($event:any){
+
+
+  const name=$event.target.defaultValue
+  let isChecked:boolean;
+
+  isChecked=$event.target.checked
+  if(name==="TUTTO IL GIORNO" && isChecked){
+    this.timeSlots=this.timeSlots.map((s: {name:string, select: boolean; })=>{
+      s.select=true;
+
+
+      return s;
+    })
+  }
+  else if(name==="TUTTO IL GIORNO" && !isChecked){
+    this.timeSlots=this.timeSlots.map((s: {name:string, select: boolean; })=>{
+      s.select=false;
+      return s;
+    })
+
+  }
+  else{
+
+    this.timeSlots= this.timeSlots.map((s: { name: string; select: boolean; })=>{
+
+      if(s.name===name){
+        s.select=isChecked;
+        this.timeSlots=this.recap(this.timeSlots);
+        return s
+      }
+
+
+      return s;
+    })
+  }
+
+
+}
 
 getSelectedStates(){
   let selectedStates: any[]=[]
@@ -284,15 +329,39 @@ getSelectedStates(){
   });
   return selectedStates;
 }
+getSelectedFonts(){
+  let selectedFonts: any[]=[]
+  this.initMap.FONTI.forEach((element: { select: any; name: any; }) => {
+    if(element.select){
+      selectedFonts.push(element.name)
+    }
+
+  });
+  return selectedFonts;
+}
+
+getSelectedTimeSlots(){
+  let selectedTimeSlots: any[]=[]
+  this.timeSlots.forEach((element: { select: any; name: any; }) => {
+    if(element.select){
+      selectedTimeSlots.push(element.name)
+    }
+
+  });
+  return selectedTimeSlots;
+}
+
+
 
 mediaCarbone(){
   let params:any={}
   params.tipo=this.stato_is_checked?"stati":"sotto_stati"
-  let valueToTake=this.stato_is_checked?"stato_maggiore":"stato"
+  let valueToTake=this.stato_is_checked?"stato_maggiore":"stato"//stato
   params.stati="["+this.getSelectedStates()+"]"
-  params.giorni=[]
-  params.fascia_oraria="[mattina]"
-  this.makeGetRequest(params).subscribe(data => { this.clearGraph();this.response=data;this.response.forEach((element: { [x: string]: any; }) => {
+  params.giorni="["+this.initMap.QUERY_TIME+"]"
+  console.log(params.giorni)
+  params.fascia_oraria="["+this.getSelectedTimeSlots()+"]"
+  this.makeGetRequest(params).subscribe(data => { this.clearGraph();this.response=data;console.log(this.response);this.response.forEach((element: { [x: string]: any; }) => {
     let red=Math.floor(Math.random() * 256)
     let green=Math.floor(Math.random() * 256)
     let blue=Math.floor(Math.random() * 256)
@@ -312,6 +381,20 @@ makeGetRequest(params:any){
   console.log(url)
   if(httpParams)url=url.substring(0,url.length-1)
   return this.http.get(url);
+}
+print(value:string){
+  this.initMap.QUERY_TIME=[];
+
+  let fine=(new Date(value.split("%")[1]).getTime()/1000)
+  let inizio=(new Date(value.split("%")[0]).getTime()/1000)
+  let diff=fine-inizio;
+  let numD=diff/3600/24+1
+  for(let i=0;i<numD;i++){
+    this.initMap.QUERY_TIME.push(inizio+(i*86400))
+  }
+
+  console.log("start date: ",value.split("%")[0], new Date(value.split("%")[0]).getTime())
+  console.log("end date: ",value.split("%")[1],  new Date(value.split("%")[0]).getTime())
 }
 
 }

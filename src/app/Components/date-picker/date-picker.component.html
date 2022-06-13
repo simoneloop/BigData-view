@@ -1,0 +1,16 @@
+<div class="datapicker-container">
+  <mat-form-field appearance="fill">
+    <mat-label>SELEZIONA UNA DATA O UN RANGE</mat-label>
+    <mat-hint>MM/DD/YYYY</mat-hint>
+    <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+  <!--  <mat-date-range-picker #picker></mat-date-range-picker> -->
+
+    <mat-date-range-input [min]="minDate" [max]="maxDate"  [rangePicker]="picker">
+      <input matStartDate placeholder="Inizio" [(ngModel)]="startDate">
+      <input matEndDate placeholder="Fine" [(ngModel)]="endDate">
+    </mat-date-range-input>
+
+    <mat-date-range-picker #picker></mat-date-range-picker>
+  </mat-form-field>
+  <button (click)="returnToParent(startDate,endDate)" class="button"><span>SELEZIONA DATA</span></button>
+</div>
