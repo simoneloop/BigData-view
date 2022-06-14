@@ -55,9 +55,14 @@ export class AppComponent {
   ngOnInit(){
     this.initValueFromBackend()
   }
+  initBarGrapf(){
+    let toSend:any={};
+    toSend.func="clear";
+    this.SharedService.sendClickEvent(toSend);
+  }
   clearGraph(){
     let toSend1:any={};
-    toSend1.func="clear";
+    toSend1.func="default";
     this.SharedService.sendClickEvent(toSend1);
   }
 
@@ -96,14 +101,14 @@ export class AppComponent {
       this.statesToShow=this.initMap.STATI
 
 
-      let toSend:any={};
+     /*  let toSend:any={};
       toSend.func="init";
       toSend.value="1";
       toSend.backgroundColor="rgba(255, 99, 132, 0.2)"
       toSend.borderColor="rgba(255, 99, 132, 1)"
       toSend.label="new"
       toSend.datasetLabel="numeri di prova"
-      this.SharedService.sendClickEvent(toSend);
+      this.SharedService.sendClickEvent(toSend); */
 
       this.running="running";
       document.getElementById("spark-icon")?.classList.add("spark-icon")
@@ -126,10 +131,7 @@ export class AppComponent {
     params.set("field1",'ciccio');
     params.set('field2',"ciao")
     let httpParams=this.getParams(params)
-    /* let fParams=undefined; */
-    /* let httpParams = new HttpParams();
-    params.forEach((value, key) => { httpParams=httpParams.set(key,value) } )
-    console.log(httpParams) */
+
 
     let url=this.ROOT_URL+this.INIT+(httpParams?"/?"+httpParams:"")
     if(httpParams)url=url.substring(0,url.length-1)
@@ -152,7 +154,6 @@ export class AppComponent {
     else{
       return undefined;
     }
-
 
     /* if(params && params.size>0){
       params.forEach((value, key) => { res+=key+"="+value+"&" } );
@@ -361,7 +362,7 @@ mediaCarbone(){
   params.giorni="["+this.initMap.QUERY_TIME+"]"
   console.log(params.giorni)
   params.fascia_oraria="["+this.getSelectedTimeSlots()+"]"
-  this.makeGetRequest(params).subscribe(data => { this.clearGraph();this.response=data;console.log(this.response);this.response.forEach((element: { [x: string]: any; }) => {
+  this.makeGetRequest(params).subscribe(data => { this.initBarGrapf();this.response=data;console.log(this.response);this.response.forEach((element: { [x: string]: any; }) => {
     let red=Math.floor(Math.random() * 256)
     let green=Math.floor(Math.random() * 256)
     let blue=Math.floor(Math.random() * 256)
