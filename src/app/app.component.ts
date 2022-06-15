@@ -14,14 +14,13 @@ import { stringify } from 'querystring';
 })
 export class AppComponent {
   title = 'spark-view';
-  /* checkboxFilter=new CheckboxsComponent("Fonti",[],"Accent");; */
+
   readonly ROOT_URL='http://localhost:8080';
   readonly FUNC1="/func1"
   readonly FUNC2="/func2"
   readonly FUNC3="/func3"
   readonly INIT="/init"
 
-  /* colorMap=new Map<String,String>(); */
   colorMap:any={
     "nucleare":"green",
     "geotermico":"ground",
@@ -44,6 +43,7 @@ export class AppComponent {
 
 
   initMap: any={}
+
   running:string="not running";
   timeSlots=[{select:true,name:'TUTTO IL GIORNO',class:"checkbox-title spaceBottom"},{select:true,name:'mattina'},{select:true,name:'pomeriggio'},{select:true,name:'sera'},{select:true,name:'notte'}]
 
@@ -61,9 +61,9 @@ export class AppComponent {
     this.SharedService.sendClickEvent(toSend);
   }
   clearGraph(){
-    let toSend1:any={};
-    toSend1.func="default";
-    this.SharedService.sendClickEvent(toSend1);
+    let toSend:any={};
+    toSend.func="default";
+    this.SharedService.sendClickEvent(toSend);
   }
 
   initValueFromBackend(){
@@ -71,26 +71,26 @@ export class AppComponent {
     let url=this.ROOT_URL+this.INIT
     this.http.get(url).subscribe(data => {
       this.response=data;
-      console.log(this.response)
+
+      this.initMap.QUERY_TIME=[];
 
       this.initMap.START_TIME=new Date(Number(this.response['start_time'][0]) * 1000);
-      this.initMap.TIME_MILLIS=this.response['start_time'][0];
-      console.log(this.initMap.START_TIME)
+
       this.initMap.END_TIME=new Date(Number(this.response['end_time'][0]) * 1000);
+
       this.initMap.FONTI=[]
       this.initMap.FONTI.push({select:false,name:"SELEZIONA TUTTE LE FONTI",color:"spaceBottom checkbox-title"},)
-
 
       this.initMap.STATI=[]
       this.initMap.STATI.push({select:false,name:"SELEZIONA TUTTI GLI STATI",color:"spaceBottom checkbox-title"},)
 
       this.initMap.SOTTO_STATI=[]
       this.initMap.SOTTO_STATI.push({select:false,name:"SELEZIONA TUTTI GLI STATI",color:"spaceBottom checkbox-title"},)
-
-
+      console.log("cosa mi arriva", this.initMap.SOTTO_STATI)
       this.response['stati_sottostati'].forEach((element: string) => {
         this.initMap.SOTTO_STATI.push({select:false,name:element})
       });
+
       this.response['fonti'].forEach((element: string) => {
         this.initMap.FONTI.push({select:false,name:element,color:this.colorMap[element]})
       });
@@ -98,17 +98,8 @@ export class AppComponent {
       this.response['stati'].forEach((element: String) => {
         this.initMap.STATI.push({select:false,name:element})
       });
+
       this.statesToShow=this.initMap.STATI
-
-
-     /*  let toSend:any={};
-      toSend.func="init";
-      toSend.value="1";
-      toSend.backgroundColor="rgba(255, 99, 132, 0.2)"
-      toSend.borderColor="rgba(255, 99, 132, 1)"
-      toSend.label="new"
-      toSend.datasetLabel="numeri di prova"
-      this.SharedService.sendClickEvent(toSend); */
 
       this.running="running";
       document.getElementById("spark-icon")?.classList.add("spark-icon")
@@ -126,17 +117,7 @@ export class AppComponent {
     toSend.datasetLabel=datasetLabel?datasetLabel:"query"
     this.SharedService.sendClickEvent(toSend);
   }
-  getJson(){
-    let params = new Map<string, any>();
-    params.set("field1",'ciccio');
-    params.set('field2',"ciao")
-    let httpParams=this.getParams(params)
 
-
-    let url=this.ROOT_URL+this.INIT+(httpParams?"/?"+httpParams:"")
-    if(httpParams)url=url.substring(0,url.length-1)
-    this.http.get(url).subscribe(data => {this.response=data;console.log(this.response)});
-  }
 
   getParams(params:any){
 
@@ -154,13 +135,6 @@ export class AppComponent {
     else{
       return undefined;
     }
-
-    /* if(params && params.size>0){
-      params.forEach((value, key) => { res+=key+"="+value+"&" } );
-      return res;
-    }
-    else{return undefined;} */
-    /* return undefined; */
 
   }
 
@@ -352,40 +326,35 @@ getSelectedTimeSlots(){
   return selectedTimeSlots;
 }
 
-
-
-mediaCarbone(){
+makeSimpleQuery(address_service:String){
   let params:any={}
   params.tipo=this.stato_is_checked?"stati":"sotto_stati"
-  let valueToTake=this.stato_is_checked?"stato_maggiore":"stato"//stato
+  let valueToTake="stato"//stato
   params.stati="["+this.getSelectedStates()+"]"
   params.giorni="["+this.initMap.QUERY_TIME+"]"
-  console.log(params.giorni)
   params.fascia_oraria="["+this.getSelectedTimeSlots()+"]"
-  this.makeGetRequest(params).subscribe(data => { this.initBarGrapf();this.response=data;console.log(this.response);this.response.forEach((element: { [x: string]: any; }) => {
+  this.makeGetRequest(address_service,params).subscribe(data => { this.initBarGrapf();this.response=data;this.response.forEach((element: { [x: string]: any; }) => {
     let red=Math.floor(Math.random() * 256)
     let green=Math.floor(Math.random() * 256)
     let blue=Math.floor(Math.random() * 256)
-    this.addValueToGraph(element[valueToTake],element['avg(carbon_intensity)'],"avg(carbon_intensity)","rgba("+red+","+green+","+blue+",0.2)","rgba("+red+","+green+","+blue+",1)")
-
-  });})
+    this.addValueToGraph(element[valueToTake],element['value'],element['label'],"rgba("+red+","+green+","+blue+",0.5)","rgba(100,100,100,1)")});
+    /* "rgba("+red+","+green+","+blue+",2.0)" */
+  })
 }
 
-
-
-makeGetRequest(params:any){
+makeGetRequest(address_service:String,params:any){
   console.log(params)
   let httpParams=this.getParams(params)
   console.log(httpParams)
 
-  let url=this.ROOT_URL+"/"+"migliorRapportoCo2Kwh"+(httpParams?"/?"+httpParams:"")
+  let url=this.ROOT_URL+"/"+address_service+(httpParams?"/?"+httpParams:"")
   console.log(url)
   if(httpParams)url=url.substring(0,url.length-1)
   return this.http.get(url);
 }
-print(value:string){
-  this.initMap.QUERY_TIME=[];
+saveSelectedTime(value:string){
 
+  console.log("cambio data",value)
   let fine=(new Date(value.split("%")[1]).getTime()/1000)
   let inizio=(new Date(value.split("%")[0]).getTime()/1000)
   let diff=fine-inizio;
@@ -394,8 +363,6 @@ print(value:string){
     this.initMap.QUERY_TIME.push(inizio+(i*86400))
   }
 
-  console.log("start date: ",value.split("%")[0], new Date(value.split("%")[0]).getTime())
-  console.log("end date: ",value.split("%")[1],  new Date(value.split("%")[0]).getTime())
 }
 
 }

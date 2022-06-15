@@ -344,18 +344,74 @@
     </svg>
 
   </div>
+  <button (click)="clearGraph()" class="button"><span>RIPULISCI</span></button>
+  <section class="psp">
 
-
-  <app-charts id="graph"></app-charts>
 
 
 
   <div class="checkboxFilter"></div>
 
-  <h1>Proviamo un po' di richieste</h1>
-  <button (click)="clearGraph()" class="button"><span>RIPULISCI</span></button>
-
   <section class="filters hide">
+    <section class="leftSide">
+
+      <section class="states-filter list-checkbox">
+        <section class="radio">
+          <mat-radio-group class="list-radio" aria-label="Select an option">
+            <mat-radio-button value="1" (change)="onChangeFormStates($event)" [checked]="true" class="first-radio">STATI</mat-radio-button>
+            <mat-radio-button value="2" (change)="onChangeFormStates($event)">STATI E SOTTOSTATI</mat-radio-button>
+          </mat-radio-group>
+        </section>
+        <div *ngFor="let s of statesToShow" class="inline">
+          <label class="input" [class]="s.color"><input [id]="s.name" type="checkbox"
+          [checked]="s.select"
+
+          [value]="s.name"
+          (change)="onChangeStates($event)"
+
+          >{{s.name}}</label>
+        </div>
+
+      </section>
+      <section class="time-slot-filter list-checkbox" >
+        <div *ngFor="let t of timeSlots" class="inline">
+          <label class="input" [class]="t.class"><input   type="checkbox"
+          [checked]="t.select"
+          [value]="t.name"
+          (change)="onChangeTimeSlots($event)"
+
+          >{{t.name}}</label>
+        </div>
+        <section class="datapicker-section">
+          <app-date-picker class="datapicker" (newEvent)="saveSelectedTime($event)" [minDate]="initMap.START_TIME" [maxDate]="initMap.END_TIME"></app-date-picker>
+        </section>
+
+      </section>
+
+  </section>
+  <section class="central-side">
+    <app-charts id="graph"></app-charts>
+    <section class="buttons-body">
+      <section class="left-buttons">
+        <button class="submit-btn" title="Miglior rapport Co2Kwh"  class="button" (click)="makeSimpleQuery('migliorRapportoCo2Kwh')"><span>MEDIA CARBONE</span></button>
+        <button class="submit-btn"  class="button" (click)="makeSimpleQuery('potenzaMediaKW')"><span>MEDIA POTENZA</span></button>
+        <button class="submit-btn"  class="button" (click)="makeSimpleQuery('emissioniMediaCO2eqMinuto')"><span>MEDIA EMISSIONI</span></button>
+        <button class="submit-btn"  class="button" (click)="makeSimpleQuery('potenzaMediaDisponibileNelloStatoKW')"><span>potenzaMediaDisponibileNelloStato</span></button>
+        <button class="submit-btn"  class="button" (click)="makeSimpleQuery('potenzaInImportazioneMedia')"><span>potenzaInImportazioneMedia</span></button>
+        <button class="submit-btn"  class="button" (click)="makeSimpleQuery('emissioniInImportazioneMedia')"><span>emissioniInImportazioneMedia</span></button>
+        <button class="submit-btn"  class="button" (click)="makeSimpleQuery('potenzaInEsportazioneMedia')"><span>potenzaInEsportazioneMedia</span></button>
+        <button class="submit-btn"  class="button" (click)="makeSimpleQuery('emissioniInEsportazioneMedia')"><span>emissioniInEsportazioneMedia</span></button>
+      </section>
+      <section class="right-buttons">
+
+      </section>
+    </section>
+  </section>
+
+
+
+
+
 
     <section class="fonts-filter list-checkbox" >
       <div *ngFor="let f of initMap.FONTI" class="inline">
@@ -367,38 +423,8 @@
         >{{f.name}}</label>
       </div>
     </section>
-    <section class="states-filter list-checkbox">
-      <section class="radio">
-        <mat-radio-group class="list-radio" aria-label="Select an option">
-          <mat-radio-button value="1" (change)="onChangeFormStates($event)" [checked]="true" class="first-radio">STATI</mat-radio-button>
-          <mat-radio-button value="2" (change)="onChangeFormStates($event)">STATI E SOTTOSTATI</mat-radio-button>
-        </mat-radio-group>
-      </section>
-      <div *ngFor="let s of statesToShow" class="inline">
-        <label class="input" [class]="s.color"><input [id]="s.name" type="checkbox"
-        [checked]="s.select"
-
-        [value]="s.name"
-        (change)="onChangeStates($event)"
-
-        >{{s.name}}</label>
-      </div>
-
-    </section>
-    <section class="time-slot-filter list-checkbox" >
-      <div *ngFor="let t of timeSlots" class="inline">
-        <label class="input" [class]="t.class"><input   type="checkbox"
-        [checked]="t.select"
-        [value]="t.name"
-        (change)="onChangeTimeSlots($event)"
-
-        >{{t.name}}</label>
-      </div>
-      <section class="datapicker-section">
-        <app-date-picker class="datapicker" (newEvent)="print($event)" [minDate]="initMap.START_TIME" [maxDate]="initMap.END_TIME"></app-date-picker>
-      </section>
-
-    </section>
   </section>
-  <button class="submit-btn"  class="button" (click)="mediaCarbone()"><span>MEDIA CARBONE</span></button>
-<router-outlet></router-outlet>
+</section>
+
+
+  <router-outlet></router-outlet>
