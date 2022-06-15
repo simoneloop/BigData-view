@@ -70,45 +70,10 @@ export class ChartsComponent implements OnInit {
     this.myChart.update() */
   }
 
-  modifyChart(){
-    let n=Math.random()*10
-    this.myChart.data.datasets[0].data.push(n)
-    let color;
-    let borderColor;
-    if(n<3 && n>=0){
-      color="red"
-    }
-    else if(n>3 && n<6){
-      color="blue"
-    }
-    else if(n>6 && n<=9){
-      color="green"
-    }
-
-    if(n<3 && n>=0){
-      borderColor="green"
-    }
-    else if(n>3 && n<6){
-      borderColor="red"
-    }
-    else if(n>6 && n<=9){
-      borderColor="blue"
-    }
-    this.myChart.data.datasets[0].backgroundColor.push(color)
-    this.myChart.data.datasets[0].borderColor.push(borderColor)
-    this.myChart.data.labels.push(n)
-    this.myChart.update()
-  }
-
 
   clear(){
     this.myChart.destroy()
     this.myChart = new Chart("sparkChart",this.getInitBarChart() as any);
-    /* this.myChart.data.datasets[0].backgroundColor=[]
-    this.myChart.data.datasets[0].borderColor=[]
-    this.myChart.data.labels=[]
-    this.myChart.data.datasets[0].data=[];
-    this.myChart.update() */
   }
 
   addValue(value:any,backgroundColor:any,borderColor:any,label:any){
