@@ -352,8 +352,8 @@
 
   <div class="checkboxFilter"></div>
 
-  <section class="filters hide">
-    <section class="leftSide">
+  <section class="filters">
+    <section class="leftSide toHideAtStart hide">
 
       <section class="states-filter list-checkbox">
         <section class="radio">
@@ -391,8 +391,8 @@
   </section>
   <section class="central-side">
     <app-charts id="graph"></app-charts>
-    <section class="buttons-body">
-      <section class="left-buttons">
+    <section class="buttons-body toHideAtStart hide">
+      <section class="left-buttons ">
         <button class="submit-btn" title="Miglior rapport Co2Kwh"  class="button" (click)="makeSimpleQuery('migliorRapportoCo2Kwh')"><span>MEDIA CARBONE</span></button>
         <button class="submit-btn"  class="button" (click)="makeSimpleQuery('potenzaMediaKW')"><span>MEDIA POTENZA</span></button>
         <button class="submit-btn"  class="button" (click)="makeSimpleQuery('emissioniMediaCO2eqMinuto')"><span>MEDIA EMISSIONI</span></button>
@@ -413,7 +413,7 @@
 
 
 
-    <section class="fonts-filter list-checkbox" >
+    <section class="fonts-filter list-checkbox toHideAtStart hide" >
       <div *ngFor="let f of initMap.FONTI" class="inline">
         <label class="input" [class]="f.color"><input  type="checkbox"
         [checked]="f.select"
@@ -423,8 +423,6 @@
         >{{f.name}}</label>
       </div>
     </section>
-  </section>
-</section>
 
 
   <router-outlet></router-outlet>

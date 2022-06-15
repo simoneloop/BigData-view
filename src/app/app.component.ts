@@ -86,7 +86,6 @@ export class AppComponent {
 
       this.initMap.SOTTO_STATI=[]
       this.initMap.SOTTO_STATI.push({select:false,name:"SELEZIONA TUTTI GLI STATI",color:"spaceBottom checkbox-title"},)
-      console.log("cosa mi arriva", this.initMap.SOTTO_STATI)
       this.response['stati_sottostati'].forEach((element: string) => {
         this.initMap.SOTTO_STATI.push({select:false,name:element})
       });
@@ -103,13 +102,26 @@ export class AppComponent {
 
       this.running="running";
       document.getElementById("spark-icon")?.classList.add("spark-icon")
-      document.getElementsByClassName("filters")[0]?.classList.remove("hide")
+      console.log(document.getElementsByClassName("toHideAtStart"))
+      for(let i=0;i<document.getElementsByClassName("toHideAtStart").length;i++){
+        document.getElementsByClassName("toHideAtStart")[i]?.classList.remove("hide")
+      }
     });
   }
 
   addValueToGraph(label:any,value:any,datasetLabel?:any,backgroundColor?:any,borderColor?:any){
     let toSend:any={};
     toSend.func="addValue";
+    toSend.value=value;
+    toSend.backgroundColor=backgroundColor?backgroundColor:"rgba(255, 99, 132, 0.2)"
+    toSend.borderColor=borderColor?borderColor:"rgba(255, 99, 132, 1)"
+    toSend.label=label
+    toSend.datasetLabel=datasetLabel?datasetLabel:"query"
+    this.SharedService.sendClickEvent(toSend);
+  }
+  addValueToGraphStacked(label:any,value:any,datasetLabel?:any,backgroundColor?:any,borderColor?:any){
+    let toSend:any={};
+    toSend.func="addValueStacked";
     toSend.value=value;
     toSend.backgroundColor=backgroundColor?backgroundColor:"rgba(255, 99, 132, 0.2)"
     toSend.borderColor=borderColor?borderColor:"rgba(255, 99, 132, 1)"
@@ -342,6 +354,29 @@ makeSimpleQuery(address_service:String){
   })
 }
 
+
+makeComplexQuery(address_service:String){
+  let params:any={}
+  params.tipo=this.stato_is_checked?"stati":"sotto_stati"
+  let valueToTake="stato"
+  params.stati="["+this.getSelectedStates()+"]"
+  params.giorni="["+this.initMap.QUERY_TIME+"]"
+  params.fascia_oraria="["+this.getSelectedTimeSlots()+"]"
+  params.fonti="["+this.getSelectedFonts()+"]"
+  this.makeGetRequest(address_service,params).subscribe(data => { this.initBarGrapf();this.response=data;this.response.forEach((element: { [x: string]: any; }) => {
+    let red=Math.floor(Math.random() * 256)
+    let green=Math.floor(Math.random() * 256)
+    let blue=Math.floor(Math.random() * 256)
+    /* for(let i=0;i<this.response['fonti'].length;i++){
+      this.addValueToGraphStacked(element[valueToTake],element['value'][i],element['label'][i],"rgba("+red+","+green+","+blue+",0.5)","rgba(100,100,100,1)")
+    } */
+    this.addValueToGraphStacked(element[valueToTake],element['value'],element['label'],"rgba("+red+","+green+","+blue+",0.5)","rgba(100,100,100,1)")});
+    /* "rgba("+red+","+green+","+blue+",2.0)" */
+  })
+}
+
+
+
 makeGetRequest(address_service:String,params:any){
   console.log(params)
   let httpParams=this.getParams(params)
@@ -354,7 +389,6 @@ makeGetRequest(address_service:String,params:any){
 }
 saveSelectedTime(value:string){
 
-  console.log("cambio data",value)
   let fine=(new Date(value.split("%")[1]).getTime()/1000)
   let inizio=(new Date(value.split("%")[0]).getTime()/1000)
   let diff=fine-inizio;
