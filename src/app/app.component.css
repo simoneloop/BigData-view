@@ -11,7 +11,7 @@
   fill: yellow;
 }
 .rounded{
-  background-color: red;
+  background-color: midnightblue;
   border-radius: 100px;
   width: 85px;
   height: 85px;
@@ -95,6 +95,9 @@
 .black{
   accent-color: black;
 }
+.solar{
+  accent-color: yellow;
+}
 .inline{
   display: flex;
   white-space: nowrap;
@@ -149,4 +152,101 @@ input[type="checkbox"]{
 }
 .time-slot-filter{
   margin-top: 5em;
+}
+.unclickable{
+  background-color: rgba(165, 164, 164, 0.829);
+}
+.unclickable p{
+
+}
+.visible{
+  display: block!important;
+}
+.error{
+  color: red;
+  padding: 10px 40px 10px 40px;
+}
+.homeTitle{
+  display: flex;
+  align-items: center;
+}
+.status{
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  width: 15em;
+}
+.angular-logo{
+  transform: scale(2);
+}
+.arrow-logo{
+  padding-left: 0.5em;
+}
+.animation-pulse{
+  animation: pulse 2s infinite;
+}
+.animation-pulseReverse{
+  animation: pulseReverse 2s infinite;
+}
+.spark-in-charge{
+
+  fill: yellow;
+}
+
+
+@keyframes pulse {
+	0% {
+		transform: scale(1);
+		fill:black;
+	}
+
+	70% {
+		transform: scale(1.2);
+		fill:yellow;
+	}
+
+	100% {
+		transform: scale(1);
+		box-shadow:black;
+	}
+}
+@keyframes pulseReverse {
+	0% {
+		transform: scale(1) rotate(180deg);
+		fill:black;
+	}
+
+	70% {
+		transform: scale(1.2) rotate(180deg);
+		fill:yellow;
+	}
+
+	100% {
+		transform: scale(1) rotate(180deg);
+		box-shadow:black;
+	}
+}
+.flexible{
+  display: flex;
+}
+
+@keyframes pulseRotation {
+	0% {
+		transform: scale(1);
+		fill:black;
+	}
+
+	50% {
+		transform: scale(1.2) rotate(180deg);
+		fill:yellow;
+	}
+
+	100% {
+		transform: scale(1) rotate(360deg);
+		box-shadow:black;
+	}
+}
+
+.loading-logo{
+  animation: pulseRotation 2s infinite;
 }

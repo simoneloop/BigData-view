@@ -32,21 +32,24 @@ export class AppComponent {
     "batterieaccu":"orangeDuracell",
     "gas":"greenGray",
     "petrolio":"petrolGreen",
-    "sconosciuto":"black"
+    "sconosciuto":"black",
+    "fotovoltaico":"solar"
 
 
   }
 
 
+
+
   stato_is_checked:boolean=true;
   sotto_stato_is_checked:boolean=false;
-
+  one_state_selected:boolean=false;
 
   initMap: any={}
 
   running:string="not running";
-  timeSlots=[{select:true,name:'TUTTO IL GIORNO',class:"checkbox-title spaceBottom"},{select:true,name:'mattina'},{select:true,name:'pomeriggio'},{select:true,name:'sera'},{select:true,name:'notte'}]
-
+/*   timeSlots=[{select:true,name:'TUTTO IL GIORNO',class:"checkbox-title spaceBottom"},{select:true,name:'mattina'},{select:true,name:'pomeriggio'},{select:true,name:'sera'},{select:true,name:'notte'}]
+ */
 
   response:any;
   statesToShow:any;
@@ -58,6 +61,12 @@ export class AppComponent {
   initBarGrapf(){
     let toSend:any={};
     toSend.func="clear";
+    this.SharedService.sendClickEvent(toSend);
+  }
+  initLineStackedGraph(value: any){
+    let toSend:any={};
+    toSend.func="initLineStackedGraph";
+    toSend.value=value;
     this.SharedService.sendClickEvent(toSend);
   }
   clearGraph(){
@@ -83,6 +92,14 @@ export class AppComponent {
 
       this.initMap.STATI=[]
       this.initMap.STATI.push({select:false,name:"SELEZIONA TUTTI GLI STATI",color:"spaceBottom checkbox-title"},)
+
+      this.initMap.timeSlots=[]
+      this.initMap.timeSlots.push({select:true,name:'TUTTO IL GIORNO',class:"checkbox-title spaceBottom"})
+      this.response['time_slots'].forEach((element: string) => {
+        this.initMap.timeSlots.push({select:true,name:element})
+      });
+
+
 
       this.initMap.SOTTO_STATI=[]
       this.initMap.SOTTO_STATI.push({select:false,name:"SELEZIONA TUTTI GLI STATI",color:"spaceBottom checkbox-title"},)
@@ -119,17 +136,23 @@ export class AppComponent {
     toSend.datasetLabel=datasetLabel?datasetLabel:"query"
     this.SharedService.sendClickEvent(toSend);
   }
-  addValueToGraphStacked(label:any,value:any,datasetLabel?:any,backgroundColor?:any,borderColor?:any){
+  addValueToGraphStacked(columnLabel:any,value:any,fontLabel?:any){
     let toSend:any={};
     toSend.func="addValueStacked";
     toSend.value=value;
-    toSend.backgroundColor=backgroundColor?backgroundColor:"rgba(255, 99, 132, 0.2)"
-    toSend.borderColor=borderColor?borderColor:"rgba(255, 99, 132, 1)"
-    toSend.label=label
-    toSend.datasetLabel=datasetLabel?datasetLabel:"query"
+    toSend.columnLabel=columnLabel
+    toSend.fontLabel=fontLabel?fontLabel:"query"
     this.SharedService.sendClickEvent(toSend);
   }
 
+  addValueToGraphLineStacked(columnLabel:any,value:any,fontLabel?:any){
+    let toSend:any={};
+    toSend.func="addValueLineStacked";
+    toSend.value=value;
+    toSend.columnLabel=columnLabel
+    toSend.fontLabel=fontLabel?fontLabel:"query"
+    this.SharedService.sendClickEvent(toSend);
+  }
 
   getParams(params:any){
 
@@ -193,6 +216,7 @@ export class AppComponent {
     const name=$event.target.defaultValue
     let isChecked:boolean;
 
+
     isChecked=$event.target.checked
     if(name==="SELEZIONA TUTTI GLI STATI" && isChecked){
       this.statesToShow=this.statesToShow.map((s: {name:String, select: boolean; })=>{
@@ -225,6 +249,7 @@ export class AppComponent {
         return s;
       })
     }
+    this.updateOneStateQuery()
 
   }
 
@@ -274,7 +299,7 @@ onChangeTimeSlots($event:any){
 
   isChecked=$event.target.checked
   if(name==="TUTTO IL GIORNO" && isChecked){
-    this.timeSlots=this.timeSlots.map((s: {name:string, select: boolean; })=>{
+    this.initMap.timeSlots=this.initMap.timeSlots.map((s: {name:string, select: boolean; })=>{
       s.select=true;
 
 
@@ -282,7 +307,7 @@ onChangeTimeSlots($event:any){
     })
   }
   else if(name==="TUTTO IL GIORNO" && !isChecked){
-    this.timeSlots=this.timeSlots.map((s: {name:string, select: boolean; })=>{
+    this.initMap.timeSlots=this.initMap.timeSlots.map((s: {name:string, select: boolean; })=>{
       s.select=false;
       return s;
     })
@@ -290,11 +315,11 @@ onChangeTimeSlots($event:any){
   }
   else{
 
-    this.timeSlots= this.timeSlots.map((s: { name: string; select: boolean; })=>{
+    this.initMap.timeSlots= this.initMap.timeSlots.map((s: { name: string; select: boolean; })=>{
 
       if(s.name===name){
         s.select=isChecked;
-        this.timeSlots=this.recap(this.timeSlots);
+        this.initMap.timeSlots=this.recap(this.initMap.timeSlots);
         return s
       }
 
@@ -324,14 +349,16 @@ getSelectedFonts(){
     }
 
   });
+  if(selectedFonts[0]==="SELEZIONA TUTTE LE FONTI"){selectedFonts.shift()}
+
   return selectedFonts;
 }
 
 getSelectedTimeSlots(){
   let selectedTimeSlots: any[]=[]
-  this.timeSlots.forEach((element: { select: any; name: any; }) => {
+  this.initMap.timeSlots.forEach((element: { select: any; name: any; }) => {
     if(element.select){
-      selectedTimeSlots.push(element.name)
+      selectedTimeSlots.push(element.name.split(' ')[0])
     }
 
   });
@@ -339,18 +366,31 @@ getSelectedTimeSlots(){
 }
 
 makeSimpleQuery(address_service:String){
+  document.getElementsByClassName("from-angular-to-spark")[0].classList.remove("hide")
+  document.getElementsByClassName("arrow-logo")[0].classList.add("animation-pulse")
+
   let params:any={}
   params.tipo=this.stato_is_checked?"stati":"sotto_stati"
   let valueToTake="stato"//stato
   params.stati="["+this.getSelectedStates()+"]"
   params.giorni="["+this.initMap.QUERY_TIME+"]"
   params.fascia_oraria="["+this.getSelectedTimeSlots()+"]"
-  this.makeGetRequest(address_service,params).subscribe(data => { this.initBarGrapf();this.response=data;this.response.forEach((element: { [x: string]: any; }) => {
+
+
+  document.getElementsByClassName("arrow-logo")[0].classList.remove("animation-pulse")
+  document.getElementsByClassName("arrow-logo")[0].classList.add("animation-pulseReverse")
+
+
+
+  this.makeGetRequest(address_service,params).subscribe(data => {
+    document.getElementsByClassName("arrow-logo")[0].classList.remove("animation-pulseReverse");
+    document.getElementsByClassName("from-angular-to-spark")[0].classList.add("hide");
+
+    this.initBarGrapf();this.response=data;this.response.forEach((element: { [x: string]: any; }) => {
     let red=Math.floor(Math.random() * 256)
     let green=Math.floor(Math.random() * 256)
     let blue=Math.floor(Math.random() * 256)
     this.addValueToGraph(element[valueToTake],element['value'],element['label'],"rgba("+red+","+green+","+blue+",0.5)","rgba(100,100,100,1)")});
-    /* "rgba("+red+","+green+","+blue+",2.0)" */
   })
 }
 
@@ -363,21 +403,60 @@ makeComplexQuery(address_service:String){
   params.giorni="["+this.initMap.QUERY_TIME+"]"
   params.fascia_oraria="["+this.getSelectedTimeSlots()+"]"
   params.fonti="["+this.getSelectedFonts()+"]"
-  this.makeGetRequest(address_service,params).subscribe(data => { this.initBarGrapf();this.response=data;this.response.forEach((element: { [x: string]: any; }) => {
-    let red=Math.floor(Math.random() * 256)
-    let green=Math.floor(Math.random() * 256)
-    let blue=Math.floor(Math.random() * 256)
-    /* for(let i=0;i<this.response['fonti'].length;i++){
-      this.addValueToGraphStacked(element[valueToTake],element['value'][i],element['label'][i],"rgba("+red+","+green+","+blue+",0.5)","rgba(100,100,100,1)")
-    } */
-    this.addValueToGraphStacked(element[valueToTake],element['value'],element['label'],"rgba("+red+","+green+","+blue+",0.5)","rgba(100,100,100,1)")});
-    /* "rgba("+red+","+green+","+blue+",2.0)" */
+  this.makeGetRequest(address_service,params).subscribe(data => {console.log("data",data); this.initBarGrapf();this.response=data; console.log("data",this.response);this.response.forEach((element: { [x: string]: any; }) => {
+
+
+    this.addValueToGraphStacked(element[valueToTake],element['value'],element['label'])});
   })
+}
+makeOneStateQuery(address_service:String){
+
+  if(this.one_state_selected){
+
+    document.getElementsByClassName("from-angular-to-spark")[0].classList.remove("hide")
+    document.getElementsByClassName("arrow-logo")[0].classList.add("animation-pulse")
+
+    let params:any={}
+    params.tipo=this.stato_is_checked?"stati":"sotto_stati"
+    let valueToTake="timestamp"
+    params.stati="["+this.getSelectedStates()+"]"
+    params.giorni="["+this.initMap.QUERY_TIME+"]"
+    params.fascia_oraria="["+this.getSelectedTimeSlots()+"]"
+    params.fonti="["+this.getSelectedFonts()+"]"
+    let firstTime=true;
+
+    document.getElementsByClassName("arrow-logo")[0].classList.remove("animation-pulse")
+    document.getElementsByClassName("arrow-logo")[0].classList.add("animation-pulseReverse")
+    this.makeGetRequest(address_service,params).subscribe(data => {
+      document.getElementsByClassName("arrow-logo")[0].classList.remove("animation-pulseReverse");
+      document.getElementsByClassName("from-angular-to-spark")[0].classList.add("hide");
+      document.getElementsByClassName("angular-updating")[0].classList.remove("hide");
+      document.getElementsByClassName("angular-updating")[0].classList.add("flexible");
+      this.response=data; console.log("risposta",this.response);
+      let cont=0;
+      this.response.forEach((element: { [x: string]: any; }) => {
+      cont++;
+      if(firstTime){
+        this.initLineStackedGraph(element['value'])
+        firstTime=false;
+      }
+      this.addValueToGraphLineStacked(element[valueToTake],element['value'],element['label'])});
+      console.log(cont,this.response.length)
+      if(cont==this.response.length){
+        document.getElementsByClassName("angular-updating")[0].classList.remove("flexible");
+      document.getElementsByClassName("angular-updating")[0].classList.add("hide");
+      }
+
+    })
+
+  }
+
 }
 
 
 
 makeGetRequest(address_service:String,params:any){
+
   console.log(params)
   let httpParams=this.getParams(params)
   console.log(httpParams)
@@ -393,10 +472,53 @@ saveSelectedTime(value:string){
   let inizio=(new Date(value.split("%")[0]).getTime()/1000)
   let diff=fine-inizio;
   let numD=diff/3600/24+1
+  this.initMap.QUERY_TIME=[];
   for(let i=0;i<numD;i++){
     this.initMap.QUERY_TIME.push(inizio+(i*86400))
   }
 
 }
+updateOneStateQuery(){
+  let itemsBtn=document.getElementsByClassName("oneStateQueryBtn")
+  let itemsPar=document.getElementsByClassName("oneStateQueryParag")
+  let count=0;
+  this.statesToShow.forEach((element: { select: any; }) => {
+    if(element.select)
+      count++;
+      if(count!=1){
+        this.one_state_selected=false;
+      }
+      else if(count==1){
+        this.one_state_selected=true;
+      }
+
+  });
+  if(this.one_state_selected){
+    for(let i=0;i<itemsPar.length;i++){
+      if(itemsPar[i].classList.contains("visible")){
+        itemsPar[i].classList.remove("visible")
+        itemsPar[i].classList.add("hide")
+      }
+     }
+   for(let i=0;i<itemsBtn.length;i++){
+    itemsBtn[i].classList.remove("unclickable")
+
+   }
+  }
+  else{
+    for(let i=0;i<itemsPar.length;i++){
+      if(itemsPar[i].classList.contains("hide")){
+        itemsPar[i].classList.remove("hide")
+        itemsPar[i].classList.add("visible")
+      }
+    }
+    for(let i=0;i<itemsBtn.length;i++){
+      itemsBtn[i].classList.add("unclickable")
+
+    }
+  }
+
+}
+
 
 }

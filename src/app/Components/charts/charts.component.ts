@@ -10,6 +10,25 @@ import { Subscription } from 'rxjs';
 })
 
 export class ChartsComponent implements OnInit {
+
+  colorMapFonti:any={
+    "nucleare":"rgba(0, 255, 0, 0.5)",
+    "geotermico":"rgba(164, 66, 0, 0.5)",
+    "biomassa":"rgba(213,137, 54, 0.5)",
+    "carbone":"rgba(60, 21, 24, 0.5)",
+    "eolico":"rgba(174, 212, 230, 0.5)",
+    "idroelettrico":"rgba(13, 33, 73, 0.5)",
+    "accumuloidro":"rgba(255, 159, 28, 0.5)",
+    "batterieaccu":"rgba(255, 159, 28, 0.5)",
+    "gas":"rgba(173,168, 182, 0.5)",
+    "petrolio":"rgba(37,48, 49, 0.5)",
+    "sconosciuto":"rgba(0, 0, 0, 0.5)",
+    "fotovoltaico":"rgba(240, 162, 2, 0.5)",
+
+
+  }
+
+
   @Input("value") value!:any;
   myChart :any;
   clickEventSubscription: Subscription;
@@ -33,7 +52,14 @@ export class ChartsComponent implements OnInit {
         this.setDefault();
       }
       else if(value.func==="addValueStacked"){
-        this.addValueStacked(value.value,value.backgroundColor,value.borderColor,value.label,value.datasetLabel);
+        this.addValueStacked(value.value,value.columnLabel,value.fontLabel);
+      }
+      else if(value.func==="initLineStackedGraph"){
+        let data=this.initLineStackedData(value.value);
+        this.initLineStackedGraph(data);
+      }
+      else if(value.func==="addValueLineStacked"){
+        this.addValueLineStacked(value.value,value.columnLabel,value.fontLabel);
       }
 
 
@@ -70,6 +96,10 @@ export class ChartsComponent implements OnInit {
     this.myChart.update() */
   }
 
+  initLineStackedGraph(data:any){
+    this.myChart.destroy()
+    this.myChart = new Chart("sparkChart",this.getInitLineStackedGraph(data) as any);
+  }
 
   clear(){
     this.myChart.destroy()
@@ -84,15 +114,64 @@ export class ChartsComponent implements OnInit {
     this.myChart.update()
   }
 
-  addValueStacked(value:any,backgroundColor:any,borderColor:any,label:any,datasetLabel:any){
+  addValueStacked(value:any,columnlabel:any,fontLabel:any){
     for(let i=0;i<value.length;i++){
-      this.myChart.data.datasets[i].data.push(value)
-      this.myChart.data.datasets[i].backgroundColor.push(backgroundColor)
-      this.myChart.data.datasets[i].borderColor.push(borderColor)
-      this.myChart.data.datasets[i].label=datasetLabel
-      this.myChart.data.labels.push(label)
+      if(i>0 && !this.myChart.data.datasets[i]){
+        this.myChart.data.datasets.push({
+          label: [],
+          data:[],
+          backgroundColor: [],
+          borderColor:[]
+      })
+      }
+      this.myChart.data.datasets[i].data.push(value[i])
+      this.myChart.data.datasets[i].backgroundColor.push(this.colorMapFonti[fontLabel[i].split("_")[0]])
+      /* this.myChart.data.datasets[i].borderColor.push(borderColor) */
+      this.myChart.data.datasets[i].label=fontLabel[i]
+
     }
+    this.myChart.data.labels.push(columnlabel)
     this.myChart.update()
+  }
+  addValueLineStacked(value:any,columnlabel:any,fontLabel:any){
+
+    for(let i=0;i<value.length;i++){
+      /* if(this.myChart.data.datasets[i]){
+        this.myChart.data.datasets.push({
+          label: [fontLabel[i]],
+          data:[value[i]],
+          backgroundColor: [this.colorMapFonti[fontLabel[i].split("_")[0]]],
+          fill:true
+        })
+
+      console.log("dopo",this.myChart)
+      this.myChart.update();
+      } */
+      this.myChart.data.datasets[i].data.push(value[i])
+
+      this.myChart.data.datasets[i].backgroundColor.push(this.colorMapFonti[fontLabel[i].split("_")[0]])
+      /* this.myChart.data.datasets[i].borderColor.push(borderColor) */
+      this.myChart.data.datasets[i].label=fontLabel[i];
+    }
+
+    this.myChart.data.labels.push(columnlabel)
+    this.myChart.update()
+  }
+  initLineStackedData(value:any){
+    let data:any=[]
+    for(let i=0;i<value.length;i++){
+      data.push({
+          label: [],
+          data:[],
+          backgroundColor: [],
+          fill:true
+        })
+
+      /* console.log("dopo",this.myChart)
+      this.myChart.update(); */
+      }
+    return data;
+
   }
 
   getInitialDataChart():any{
@@ -112,25 +191,67 @@ export class ChartsComponent implements OnInit {
         }]
       },
       options: {
-        plugins: {
+        /* plugins: {
           title: {
             display: true,
             text: 'Chart.js Bar Chart - Stacked'
           },
-        },
+        }, */
         responsive: true,
         scales: {
           x: {
             stacked: true,
           },
           y: {
-            stacked: true
+            stacked: true,
+            beginAtZero: true
           }
         }
       }
     }
     return initBarConfig;
   }
+  getInitLineStackedGraph(data:any):any{
+    let initBarConfig:any={
+      type: 'line',
+      data:{
+        labels: [],
+        datasets: data,
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          tooltip: {
+            mode: 'index'
+          },
+        },
+        interaction: {
+          mode: 'nearest',
+          axis: 'x',
+          intersect: false
+        },
+        scales: {
+          x: {
+            title: {
+              display: true,
+              text: 'Month'
+            }
+          },
+          y: {
+            stacked: true,
+            title: {
+              display: true,
+              text: 'Value'
+            }
+          }
+        }
+      }
+    }
+    return initBarConfig;
+  }
+
+
+
 
   setDefault():any{
 

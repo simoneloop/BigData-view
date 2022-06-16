@@ -10,7 +10,8 @@
 <style>
   :host {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
-    font-size: 14px;
+    font-size:larger;
+    font-weight: 700;
     color: #333;
     box-sizing: border-box;
     -webkit-font-smoothing: antialiased;
@@ -335,8 +336,9 @@
         <path d="M848 359.3H627.7L825.8 109c4.1-5.3.4-13-6.3-13H436c-2.8 0-5.5 1.5-6.9 4L170 547.5c-3.1 5.3.7 12 6.9 12h174.4l-89.4 357.6c-1.9 7.8 7.5 13.3 13.3 7.7L853.5 373c5.2-4.9 1.7-13.7-5.5-13.7z"/>
       </svg>
     </div>
-
     <span>SPARK SERVER is {{running}}!</span>
+
+
 
     <svg id="rocket-smoke" xmlns="http://www.w3.org/2000/svg" width="516.119" height="1083.632" viewBox="0 0 516.119 1083.632">
       <title>Rocket Ship Smoke</title>
@@ -344,6 +346,90 @@
     </svg>
 
   </div>
+  <div class="status from-angular-to-spark hide">
+
+    <img class="angular-logo"
+      width="40"
+      alt="Angular Logo"
+      src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNTAgMjUwIj4KICAgIDxwYXRoIGZpbGw9IiNERDAwMzEiIGQ9Ik0xMjUgMzBMMzEuOSA2My4ybDE0LjIgMTIzLjFMMTI1IDIzMGw3OC45LTQzLjcgMTQuMi0xMjMuMXoiIC8+CiAgICA8cGF0aCBmaWxsPSIjQzMwMDJGIiBkPSJNMTI1IDMwdjIyLjItLjFWMjMwbDc4LjktNDMuNyAxNC4yLTEyMy4xTDEyNSAzMHoiIC8+CiAgICA8cGF0aCAgZmlsbD0iI0ZGRkZGRiIgZD0iTTEyNSA1Mi4xTDY2LjggMTgyLjZoMjEuN2wxMS43LTI5LjJoNDkuNGwxMS43IDI5LjJIMTgzTDEyNSA1Mi4xem0xNyA4My4zaC0zNGwxNy00MC45IDE3IDQwLjl6IiAvPgogIDwvc3ZnPg=="
+    />
+    <svg version="1.1" class="arrow-logo" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 width="70px" height="70px" viewBox="0 0 414.287 414.287" style="enable-background:new 0 0 414.287 414.287; "
+	 xml:space="preserve">
+    <g>
+      <path d="M412.398,202.993L288.535,95.289c-1.502-1.305-3.591-1.699-5.463-1.027c-1.873,0.67-3.237,2.3-3.568,4.261l-8.938,52.887
+        H40.554c-2.684,0-4.976,1.938-5.423,4.583l-3.054,18.067c-0.27,1.597,0.177,3.23,1.223,4.467c1.045,1.237,2.581,1.95,4.2,1.95
+        h103.982l-2.208,15H8.134c-2.684,0-4.976,1.938-5.423,4.583l-2.634,15.584c-0.27,1.597,0.177,3.229,1.223,4.467
+        c1.045,1.236,2.581,1.949,4.2,1.949h159.196l-2.206,15H63.505c-2.684,0-4.976,1.938-5.423,4.583l-2.505,14.817
+        c-0.271,1.597,0.177,3.229,1.222,4.467c1.046,1.237,2.582,1.95,4.201,1.95h190.721l-8.628,51.053
+        c-0.366,2.168,0.593,4.346,2.439,5.538c0.908,0.586,1.945,0.879,2.982,0.879c1.07,0,2.141-0.312,3.067-0.935l160.272-107.704
+        c1.421-0.955,2.316-2.518,2.422-4.225C414.385,205.776,413.689,204.116,412.398,202.993z"/>
+    </g>
+    </svg>
+
+
+
+
+
+
+    <div class="rounded red">
+      <svg  width="50px" height="50px" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" class="icon spark-in-charge ">
+        <path d="M848 359.3H627.7L825.8 109c4.1-5.3.4-13-6.3-13H436c-2.8 0-5.5 1.5-6.9 4L170 547.5c-3.1 5.3.7 12 6.9 12h174.4l-89.4 357.6c-1.9 7.8 7.5 13.3 13.3 7.7L853.5 373c5.2-4.9 1.7-13.7-5.5-13.7z"/>
+      </svg>
+    </div>
+  </div>
+
+
+
+
+
+
+
+  <div class="status angular-updating hide">
+
+    <img class="angular-logo"
+      width="40"
+      alt="Angular Logo"
+      src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNTAgMjUwIj4KICAgIDxwYXRoIGZpbGw9IiNERDAwMzEiIGQ9Ik0xMjUgMzBMMzEuOSA2My4ybDE0LjIgMTIzLjFMMTI1IDIzMGw3OC45LTQzLjcgMTQuMi0xMjMuMXoiIC8+CiAgICA8cGF0aCBmaWxsPSIjQzMwMDJGIiBkPSJNMTI1IDMwdjIyLjItLjFWMjMwbDc4LjktNDMuNyAxNC4yLTEyMy4xTDEyNSAzMHoiIC8+CiAgICA8cGF0aCAgZmlsbD0iI0ZGRkZGRiIgZD0iTTEyNSA1Mi4xTDY2LjggMTgyLjZoMjEuN2wxMS43LTI5LjJoNDkuNGwxMS43IDI5LjJIMTgzTDEyNSA1Mi4xem0xNyA4My4zaC0zNGwxNy00MC45IDE3IDQwLjl6IiAvPgogIDwvc3ZnPg=="
+    />
+    <svg version="1.1" class="loading-logo" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+    width="70px" height="70px" viewBox="0 0 26.349 26.35" style="enable-background:new 0 0 26.349 26.35;"
+	 xml:space="preserve">
+<g>
+	<g>
+		<circle cx="13.792" cy="3.082" r="3.082"/>
+		<circle cx="13.792" cy="24.501" r="1.849"/>
+		<circle cx="6.219" cy="6.218" r="2.774"/>
+		<circle cx="21.365" cy="21.363" r="1.541"/>
+		<circle cx="3.082" cy="13.792" r="2.465"/>
+		<circle cx="24.501" cy="13.791" r="1.232"/>
+		<path d="M4.694,19.84c-0.843,0.843-0.843,2.207,0,3.05c0.842,0.843,2.208,0.843,3.05,0c0.843-0.843,0.843-2.207,0-3.05
+			C6.902,18.996,5.537,18.988,4.694,19.84z"/>
+		<circle cx="21.364" cy="6.218" r="0.924"/>
+	</g>
+</g>
+</svg>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
   <button (click)="clearGraph()" class="button"><span>RIPULISCI</span></button>
   <section class="psp">
 
@@ -374,7 +460,7 @@
 
       </section>
       <section class="time-slot-filter list-checkbox" >
-        <div *ngFor="let t of timeSlots" class="inline">
+        <div *ngFor="let t of initMap.timeSlots" class="inline">
           <label class="input" [class]="t.class"><input   type="checkbox"
           [checked]="t.select"
           [value]="t.name"
@@ -393,16 +479,20 @@
     <app-charts id="graph"></app-charts>
     <section class="buttons-body toHideAtStart hide">
       <section class="left-buttons ">
-        <button class="submit-btn" title="Miglior rapport Co2Kwh"  class="button" (click)="makeSimpleQuery('migliorRapportoCo2Kwh')"><span>MEDIA CARBONE</span></button>
-        <button class="submit-btn"  class="button" (click)="makeSimpleQuery('potenzaMediaKW')"><span>MEDIA POTENZA</span></button>
-        <button class="submit-btn"  class="button" (click)="makeSimpleQuery('emissioniMediaCO2eqMinuto')"><span>MEDIA EMISSIONI</span></button>
-        <button class="submit-btn"  class="button" (click)="makeSimpleQuery('potenzaMediaDisponibileNelloStatoKW')"><span>potenzaMediaDisponibileNelloStato</span></button>
-        <button class="submit-btn"  class="button" (click)="makeSimpleQuery('potenzaInImportazioneMedia')"><span>potenzaInImportazioneMedia</span></button>
-        <button class="submit-btn"  class="button" (click)="makeSimpleQuery('emissioniInImportazioneMedia')"><span>emissioniInImportazioneMedia</span></button>
-        <button class="submit-btn"  class="button" (click)="makeSimpleQuery('potenzaInEsportazioneMedia')"><span>potenzaInEsportazioneMedia</span></button>
-        <button class="submit-btn"  class="button" (click)="makeSimpleQuery('emissioniInEsportazioneMedia')"><span>emissioniInEsportazioneMedia</span></button>
+        <button  title="Una media nel tempo del rapporto Co2/Kwh statale"  class="button" (click)="makeSimpleQuery('migliorRapportoCo2Kwh')"><span>Intensità di Carbonio</span></button>
+        <button  title="Una media nel tempo della potenza prodotta dallo stato"  class="button" (click)="makeSimpleQuery('potenzaMediaKW')"><span>Media potenza statale </span></button>
+        <button  title="Una media nel tempo delle emissioni prodotte dallo stato" class="button" (click)="makeSimpleQuery('emissioniMediaCO2eqMinuto')"><span>Media emissioni statali </span></button>
+        <button  title="Una media nel tempo del fabbisogno energetico dello stato" class="button" (click)="makeSimpleQuery('potenzaMediaDisponibileNelloStatoKW')"><span>Media fabbisogno statale</span></button>
+        <button  title="Una media nel tempo della potenza importata dagli stati limitrofi" class="button" (click)="makeSimpleQuery('potenzaInImportazioneMedia')"><span>Media potenza importazioni</span></button>
+        <button  title="Una media nel tempo delle emissioni prodotte dalle importazioni dagli stati limitrofi" class="button" (click)="makeSimpleQuery('emissioniInImportazioneMedia')"><span>Media emissioni importazioni</span></button>
+        <button  title="Una media nel tempo della potenza esportata negli stati limitrofi" class="button" (click)="makeSimpleQuery('potenzaInEsportazioneMedia')"><span>Media potenza esportazioni</span></button>
+        <button  title="Una media nel tempo delle emissioni prodotte dalle esportazioni negli stati limitrofi" class="button" (click)="makeSimpleQuery('emissioniInEsportazioneMedia')"><span>Media emissioni esportazioni</span></button>
       </section>
       <section class="right-buttons">
+        <button  title="Una media nel tempo della potenza installata nello stato fonte per fonte"  class="button" (click)="makeComplexQuery('potenzaMediaInstallataPerFonti')"><span>Potenza installata fonti</span></button>
+        <button  title="Una media nel tempo della potenza prodotta dallo stato fonte per fonte"  class="button" (click)="makeComplexQuery('potenzaMediaUtilizzataPerFonti')"><span>Media Potenza fonti</span></button>
+        <button  title="Una media nel tempo delle emissioni prodotte dallo stato fonte per fonte"  class="button" (click)="makeComplexQuery('emissioniMediaCO2eqMinutoPerFonti')"><span>Emissioni fonti</span></button>
+
 
       </section>
     </section>
@@ -412,7 +502,7 @@
 
 
 
-
+  <section class="right-side">
     <section class="fonts-filter list-checkbox toHideAtStart hide" >
       <div *ngFor="let f of initMap.FONTI" class="inline">
         <label class="input" [class]="f.color"><input  type="checkbox"
@@ -424,5 +514,10 @@
       </div>
     </section>
 
+    <section class="special-query toHideAtStart hide">
+      <button  title="Andamento medio nel tempo fonte per fonte"  class="button oneStateQueryBtn unclickable" (click)="makeOneStateQuery('distribuzioneDellaPotenzaDisponibileNelTempo')"><span>Special baby</span></button>
+      <p  class="oneStateQueryParag visible error">^ è possibile chiamare questa query selezionando uno e un solo stato</p>
+    </section>
+  </section>
 
   <router-outlet></router-outlet>
