@@ -186,6 +186,7 @@ input[type="checkbox"]{
 .angular-logo{
   transform: scale(2);
   padding-right:0.5em;
+  padding-left:1em;
 }
 .arrow-logo{
 
