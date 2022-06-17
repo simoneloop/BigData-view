@@ -50,7 +50,8 @@ export class AppComponent {
   running:string="not running";
 /*   timeSlots=[{select:true,name:'TUTTO IL GIORNO',class:"checkbox-title spaceBottom"},{select:true,name:'mattina'},{select:true,name:'pomeriggio'},{select:true,name:'sera'},{select:true,name:'notte'}]
  */
-
+  epsilon =0.3;
+  min_samples = 2;
   response:any;
   statesToShow:any;
 
@@ -69,6 +70,18 @@ export class AppComponent {
     toSend.value=value;
     this.SharedService.sendClickEvent(toSend);
   }
+  initLineUnstackedGraph(value: any){
+    let toSend:any={};
+    toSend.func="initLineUnstackedGraph";
+    toSend.value=value;
+    this.SharedService.sendClickEvent(toSend);
+  }
+  initBubbleGraph(value:any){
+    let toSend:any={};
+    toSend.func="initBubbleGraph"
+    toSend.value=value;
+    this.SharedService.sendClickEvent(toSend);
+  }
   clearGraph(){
     let toSend:any={};
     toSend.func="default";
@@ -76,7 +89,10 @@ export class AppComponent {
   }
 
   initValueFromBackend(){
-
+    let list=document.getElementsByClassName("to-animate-at-start")
+    for(let i=0;i<list.length;i++){
+      list[i].classList.add("animate-checkbox")
+    }
     let url=this.ROOT_URL+this.INIT
     this.http.get(url).subscribe(data => {
       this.response=data;
@@ -123,6 +139,17 @@ export class AppComponent {
       for(let i=0;i<document.getElementsByClassName("toHideAtStart").length;i++){
         document.getElementsByClassName("toHideAtStart")[i]?.classList.remove("hide")
       }
+      (async () => {
+        // Do something before delay
+        console.log('before delay')
+
+        await new Promise(f => setTimeout(f, 1200));
+
+        for(let i=0;i<list.length;i++){
+          list[i].classList.remove("animate-checkbox")
+        }
+      })();
+
     });
   }
 
@@ -153,6 +180,14 @@ export class AppComponent {
     toSend.fontLabel=fontLabel?fontLabel:"query"
     this.SharedService.sendClickEvent(toSend);
   }
+  addValueToBubbleGraph(clusterLabel:any,value:any,bubbleLabel:any){
+    let toSend:any={};
+    toSend.func="addValueBubbleGraph";
+    toSend.value=value;
+    toSend.clusterLabel=clusterLabel
+    toSend.bubbleLabel=bubbleLabel
+    this.SharedService.sendClickEvent(toSend);
+  }
 
   getParams(params:any){
 
@@ -164,7 +199,6 @@ export class AppComponent {
         }
         res+=k+"="+params[k]+"&"
       }
-      console.log(res)
       return res
     }
     else{
@@ -364,8 +398,19 @@ getSelectedTimeSlots(){
   });
   return selectedTimeSlots;
 }
+selectButton(event:any){
 
-makeSimpleQuery(address_service:String){
+  let list=document.getElementsByTagName("button")
+  console.log("list",list)
+  for(let i=0;i<list.length;i++){
+    list[i].classList.remove("selected-btn")
+  }
+  event.target.setAttribute("class",event.target.getAttribute("class")+" selected-btn")
+}
+
+makeSimpleQuery(address_service:String, event?:any){
+  this.selectButton(event)
+
   document.getElementsByClassName("from-angular-to-spark")[0].classList.remove("hide")
   document.getElementsByClassName("arrow-logo")[0].classList.add("animation-pulse")
 
@@ -383,6 +428,7 @@ makeSimpleQuery(address_service:String){
 
 
   this.makeGetRequest(address_service,params).subscribe(data => {
+
     document.getElementsByClassName("arrow-logo")[0].classList.remove("animation-pulseReverse");
     document.getElementsByClassName("from-angular-to-spark")[0].classList.add("hide");
 
@@ -395,7 +441,9 @@ makeSimpleQuery(address_service:String){
 }
 
 
-makeComplexQuery(address_service:String){
+makeComplexQuery(address_service:String, event?:any){
+  this.selectButton(event)
+
   let params:any={}
   params.tipo=this.stato_is_checked?"stati":"sotto_stati"
   let valueToTake="stato"
@@ -409,13 +457,34 @@ makeComplexQuery(address_service:String){
     this.addValueToGraphStacked(element[valueToTake],element['value'],element['label'])});
   })
 }
-makeOneStateQuery(address_service:String){
-
-  if(this.one_state_selected){
-
+animationIs(value:String){
+  if(value==="sending"){
     document.getElementsByClassName("from-angular-to-spark")[0].classList.remove("hide")
     document.getElementsByClassName("arrow-logo")[0].classList.add("animation-pulse")
+  }
+  else if(value==="receiving"){
+    document.getElementsByClassName("arrow-logo")[0].classList.remove("animation-pulse")
+    document.getElementsByClassName("arrow-logo")[0].classList.add("animation-pulseReverse")
+  }
+  else if(value==="received"){
+    document.getElementsByClassName("arrow-logo")[0].classList.remove("animation-pulseReverse");
+    document.getElementsByClassName("from-angular-to-spark")[0].classList.add("hide");
+  }
+  else if(value==="loading"){
+    document.getElementsByClassName("angular-updating")[0].classList.remove("hide");
+    document.getElementsByClassName("angular-updating")[0].classList.add("flexible");
+  }
+  else{
+    document.getElementsByClassName("angular-updating")[0].classList.remove("flexible");
+    document.getElementsByClassName("angular-updating")[0].classList.add("hide");
+  }
+}
+makeLineComplexQuery(address_service:String,stacked:boolean, event?:any){
 
+  if(/* this.one_state_selected */true){
+    this.selectButton(event)
+
+    this.animationIs("sending")
     let params:any={}
     params.tipo=this.stato_is_checked?"stati":"sotto_stati"
     let valueToTake="timestamp"
@@ -425,36 +494,81 @@ makeOneStateQuery(address_service:String){
     params.fonti="["+this.getSelectedFonts()+"]"
     let firstTime=true;
 
-    document.getElementsByClassName("arrow-logo")[0].classList.remove("animation-pulse")
-    document.getElementsByClassName("arrow-logo")[0].classList.add("animation-pulseReverse")
+    this.animationIs("receiving")
     this.makeGetRequest(address_service,params).subscribe(data => {
-      document.getElementsByClassName("arrow-logo")[0].classList.remove("animation-pulseReverse");
-      document.getElementsByClassName("from-angular-to-spark")[0].classList.add("hide");
-      document.getElementsByClassName("angular-updating")[0].classList.remove("hide");
-      document.getElementsByClassName("angular-updating")[0].classList.add("flexible");
-      this.response=data; console.log("risposta",this.response);
+      this.animationIs("received")
+      console.log("received")
+      /* this.animationIs("loading") */
+
+      this.response=data;
+      console.log("risposta",this.response);
       let cont=0;
       this.response.forEach((element: { [x: string]: any; }) => {
       cont++;
       if(firstTime){
-        this.initLineStackedGraph(element['value'])
+        if(stacked){
+          this.initLineStackedGraph(element['value'])
+
+        }
+        else{
+          this.initLineUnstackedGraph(element['value'])
+        }
         firstTime=false;
+
       }
       this.addValueToGraphLineStacked(element[valueToTake],element['value'],element['label'])});
-      console.log(cont,this.response.length)
-      if(cont==this.response.length){
-        document.getElementsByClassName("angular-updating")[0].classList.remove("flexible");
-      document.getElementsByClassName("angular-updating")[0].classList.add("hide");
-      }
-
+      /* this.animationIs("stop") */
     })
 
   }
 
 }
+makeDbScanQuery(address_service:String, event?:any){
+  this.animationIs("sending")
+  let params:any={}
+  params.eps=this.epsilon.toString();
+  params.ms=this.min_samples.toString();
+  params.tipo=this.stato_is_checked?"stati":"sotto_stati"
+  let valueToTake="stati"
+  params.stati="["+this.getSelectedStates()+"]"
+  params.giorni="["+this.initMap.QUERY_TIME+"]"
+  params.fascia_oraria="["+this.getSelectedTimeSlots()+"]"
+  params.fonti="["+this.getSelectedFonts()+"]"
+  let firstTime=true;
+
+  this.animationIs("receiving")
+  this.makeGetRequest(address_service,params).subscribe(data => {
+    this.animationIs("received")
+    /* this.animationIs("loading") */
+
+    this.response=data;
+
+    this.response.forEach((element: { [x: string]: any; }) => {
+
+    if(firstTime){
+      this.initBubbleGraph(element['value'])
+      firstTime=false;
+
+    }
+    console.log(element)
+    this.addValueToBubbleGraph(element['label'],element['value'],element[valueToTake])});
+    /* this.animationIs("stop") */
+  })
 
 
 
+}
+
+
+updateEpsilon(value: string) {
+  if(value && parseFloat(value)>0){this.epsilon = parseFloat(value);}
+  else{this.epsilon=0.3}
+
+}
+updateMin_samples(value: string) {
+  if(value && parseFloat(value)>0){this.min_samples = parseInt(value);}
+  else{this.min_samples=2}
+}
 makeGetRequest(address_service:String,params:any){
 
   console.log(params)

@@ -33,6 +33,7 @@
 }
 
 .list-checkbox{
+
   width: -webkit-fill-available;
   box-shadow: 2px 2px #a3d7e5;
   max-height: 20em;
@@ -43,6 +44,9 @@
   padding: 1em 2em 1em 1em;
   border-radius: 5px;
 
+}
+.animate-checkbox{
+  animation: shacking-start 0.2s infinite;
 }
 .list-checkbox .radio{
 
@@ -125,6 +129,7 @@ input[type="checkbox"]{
 .button span{
   color: white;
   font-weight: 600;
+  pointer-events: none;
 }
 .card{
 
@@ -142,6 +147,7 @@ input[type="checkbox"]{
   /* flex-grow: 3; */
   flex-direction: column;
   border-right: solid darkslategrey;
+  padding-left: 5em;
 
 }
 .buttons-body{
@@ -149,6 +155,7 @@ input[type="checkbox"]{
 }
 .right-buttons{
   width: 100%;
+  padding-right: 5em;
 }
 .time-slot-filter{
   margin-top: 5em;
@@ -178,9 +185,10 @@ input[type="checkbox"]{
 }
 .angular-logo{
   transform: scale(2);
+  padding-right:0.5em;
 }
 .arrow-logo{
-  padding-left: 0.5em;
+
 }
 .animation-pulse{
   animation: pulse 2s infinite;
@@ -246,7 +254,145 @@ input[type="checkbox"]{
 		box-shadow:black;
 	}
 }
+@keyframes pulse-only {
+	0% {
+		transform: scale(1);
+
+	}
+
+	50% {
+		transform: scale(1.05)
+	}
+
+	100% {
+		transform: scale(1) ;
+	}
+}
+@keyframes pulse-only-star {
+	0% {
+		transform: scale(1);
+
+	}
+
+	50% {
+		transform: scale(1.1)
+	}
+
+	100% {
+		transform: scale(1) ;
+	}
+}
+@keyframes shacking-start {
+	0% {
+		transform: rotate(0);
+
+	}
+  12.5%{
+    transform: rotate(3deg);
+  }
+  25%{
+    transform: rotate(6deg);
+  }
+  37.5%{
+    transform: rotate(3deg);
+  }
+  50%{
+    transform: rotate(0deg);
+  }
+
+	62.5% {
+		transform: rotate(-3deg)
+	}
+  75%{
+    transform: rotate(-6deg)
+  }
+  87.5%{
+    transform: rotate(-3deg);
+  }
+  100%{
+    transform: rotate(0deg);
+  }
+}
 
 .loading-logo{
   animation: pulseRotation 2s infinite;
+}
+.row{
+  display: flex;
+  flex-direction: row;
+}
+.row p{
+
+  margin: 0.5em 0em 0em 0.5em;
+
+}
+.column{
+  display: flex;
+  flex-direction: column;
+}
+.dbscan-form{
+  margin-top: 1em;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  min-height: 10em;
+  justify-content: space-evenly;
+  border: solid 3px gray;
+  background-color: rgba(0, 0, 0, 0.87);
+  border-radius: 50px;
+  padding: 2em;
+}
+.dbscan-form p{
+
+  color: white;
+}
+.dbscan-form input{
+  padding: 0.5em;
+  border-radius: 10px;
+  font-weight: bold;
+  font-size: unset;
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+input[type=number] {
+  -moz-appearance: textfield;
+}
+.simple{background-color: green;
+ }
+.medium{background-color: darkorange;
+  }
+.complex{background-color: #c60918;
+  }
+.star{
+  background-color: gold;
+  animation: pulse-only-star 2s infinite;
+}
+
+.star span{
+  color: black;
+  font-weight: 800;
+}
+
+@keyframes color {
+  0% {
+    transform: scale(1);
+    background-color: #222;
+  }
+  50% {
+    transform: scale(1.2);
+    background-color: #4285f4;
+  }
+  100% {
+    transform: scale(1);
+    background-color: #222;
+  }
+}
+.selected-btn{
+  animation: color 2s infinite;
 }

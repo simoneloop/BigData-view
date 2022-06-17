@@ -441,7 +441,7 @@
   <section class="filters">
     <section class="leftSide toHideAtStart hide">
 
-      <section class="states-filter list-checkbox">
+      <section class="states-filter list-checkbox to-animate-at-start">
         <section class="radio">
           <mat-radio-group class="list-radio" aria-label="Select an option">
             <mat-radio-button value="1" (change)="onChangeFormStates($event)" [checked]="true" class="first-radio">STATI</mat-radio-button>
@@ -459,7 +459,7 @@
         </div>
 
       </section>
-      <section class="time-slot-filter list-checkbox" >
+      <section class="time-slot-filter list-checkbox to-animate-at-start" >
         <div *ngFor="let t of initMap.timeSlots" class="inline">
           <label class="input" [class]="t.class"><input   type="checkbox"
           [checked]="t.select"
@@ -479,20 +479,24 @@
     <app-charts id="graph"></app-charts>
     <section class="buttons-body toHideAtStart hide">
       <section class="left-buttons ">
-        <button  title="Una media nel tempo del rapporto Co2/Kwh statale"  class="button" (click)="makeSimpleQuery('migliorRapportoCo2Kwh')"><span>Intensità di Carbonio</span></button>
-        <button  title="Una media nel tempo della potenza prodotta dallo stato"  class="button" (click)="makeSimpleQuery('potenzaMediaKW')"><span>Media potenza statale </span></button>
-        <button  title="Una media nel tempo delle emissioni prodotte dallo stato" class="button" (click)="makeSimpleQuery('emissioniMediaCO2eqMinuto')"><span>Media emissioni statali </span></button>
-        <button  title="Una media nel tempo del fabbisogno energetico dello stato" class="button" (click)="makeSimpleQuery('potenzaMediaDisponibileNelloStatoKW')"><span>Media fabbisogno statale</span></button>
-        <button  title="Una media nel tempo della potenza importata dagli stati limitrofi" class="button" (click)="makeSimpleQuery('potenzaInImportazioneMedia')"><span>Media potenza importazioni</span></button>
-        <button  title="Una media nel tempo delle emissioni prodotte dalle importazioni dagli stati limitrofi" class="button" (click)="makeSimpleQuery('emissioniInImportazioneMedia')"><span>Media emissioni importazioni</span></button>
-        <button  title="Una media nel tempo della potenza esportata negli stati limitrofi" class="button" (click)="makeSimpleQuery('potenzaInEsportazioneMedia')"><span>Media potenza esportazioni</span></button>
-        <button  title="Una media nel tempo delle emissioni prodotte dalle esportazioni negli stati limitrofi" class="button" (click)="makeSimpleQuery('emissioniInEsportazioneMedia')"><span>Media emissioni esportazioni</span></button>
+        <button  title="Una media nel tempo del rapporto Co2/Kwh statale"  class="button simple" (click)="makeSimpleQuery('migliorRapportoCo2Kwh',$event)"><span>Intensità di Carbonio</span></button>
+        <button  title="Una media nel tempo della potenza prodotta dallo stato"  class="button simple" (click)="makeSimpleQuery('potenzaMediaKW',$event)"><span>Media potenza statale </span></button>
+        <button  title="Una media nel tempo delle emissioni prodotte dallo stato" class="button simple" (click)="makeSimpleQuery('emissioniMediaCO2eqMinuto',$event)"><span>Media emissioni statali </span></button>
+        <button  title="Una media nel tempo del fabbisogno energetico dello stato" class="button simple" (click)="makeSimpleQuery('potenzaMediaDisponibileNelloStatoKW',$event)"><span>Media fabbisogno statale</span></button>
+        <button  title="Una media nel tempo della potenza importata dagli stati limitrofi" class="button simple" (click)="makeSimpleQuery('potenzaInImportazioneMedia',$event)"><span>Media potenza importazioni</span></button>
+        <button  title="Una media nel tempo delle emissioni prodotte dalle importazioni dagli stati limitrofi" class="button simple" (click)="makeSimpleQuery('emissioniInImportazioneMedia',$event)"><span>Media emissioni importazioni</span></button>
+        <button  title="Una media nel tempo della potenza esportata negli stati limitrofi" class=" button simple" (click)="makeSimpleQuery('potenzaInEsportazioneMedia',$event)"><span>Media potenza esportazioni</span></button>
+        <button  title="Una media nel tempo delle emissioni prodotte dalle esportazioni negli stati limitrofi" class="button simple" (click)="makeSimpleQuery('emissioniInEsportazioneMedia',$event)"><span>Media emissioni esportazioni</span></button>
       </section>
       <section class="right-buttons">
-        <button  title="Una media nel tempo della potenza installata nello stato fonte per fonte"  class="button" (click)="makeComplexQuery('potenzaMediaInstallataPerFonti')"><span>Potenza installata fonti</span></button>
-        <button  title="Una media nel tempo della potenza prodotta dallo stato fonte per fonte"  class="button" (click)="makeComplexQuery('potenzaMediaUtilizzataPerFonti')"><span>Media Potenza fonti</span></button>
-        <button  title="Una media nel tempo delle emissioni prodotte dallo stato fonte per fonte"  class="button" (click)="makeComplexQuery('emissioniMediaCO2eqMinutoPerFonti')"><span>Emissioni fonti</span></button>
-
+        <button  title="Una media nel tempo della potenza installata nello stato fonte per fonte"  class="button medium" (click)="makeComplexQuery('potenzaMediaInstallataPerFonti',$event)"><span>Potenza installata fonti</span></button>
+        <button  title="Una media nel tempo della potenza prodotta dallo stato fonte per fonte"  class="button medium" (click)="makeComplexQuery('potenzaMediaUtilizzataPerFonti',$event)"><span>Media Potenza fonti</span></button>
+        <button  title="Una media nel tempo delle emissioni prodotte dallo stato fonte per fonte"  class="button medium" (click)="makeComplexQuery('emissioniMediaCO2eqMinutoPerFonti',$event)"><span>Emissioni fonti</span></button>
+        <div class="row">
+          <button  title="Andamento medio nel tempo fonte per fonte"  class="button complex " (click)="makeLineComplexQuery('distribuzioneDellaEnergiaDisponibileNelTempo',true,$event)"><span>KwH nel tempo</span></button>
+          <button  title="Andamento medio nel tempo fonte per fonte"  class="button complex" (click)="makeLineComplexQuery('distribuzioneDellaEnergiaePotenzaDisponibileNelTempo',false,$event)"><span>Rapporto installata utilizzata</span></button>
+          <button  title="Emissioni medie nel tempo fonte per fonte"  class="button complex" (click)="makeLineComplexQuery('distribuzioneDelleEmissioniNelTempo',true,$event)"><span>Emissioni nel tempo</span></button>
+        </div>
 
       </section>
     </section>
@@ -503,7 +507,7 @@
 
 
   <section class="right-side">
-    <section class="fonts-filter list-checkbox toHideAtStart hide" >
+    <section class="fonts-filter list-checkbox toHideAtStart hide to-animate-at-start" >
       <div *ngFor="let f of initMap.FONTI" class="inline">
         <label class="input" [class]="f.color"><input  type="checkbox"
         [checked]="f.select"
@@ -514,9 +518,22 @@
       </div>
     </section>
 
-    <section class="special-query toHideAtStart hide">
-      <button  title="Andamento medio nel tempo fonte per fonte"  class="button oneStateQueryBtn unclickable" (click)="makeOneStateQuery('distribuzioneDellaPotenzaDisponibileNelTempo')"><span>Special baby</span></button>
-      <p  class="oneStateQueryParag visible error">^ è possibile chiamare questa query selezionando uno e un solo stato</p>
+    <section class="special-query toHideAtStart hide to-animate-at-start">
+     <div class="dbscan-form">
+        <div class="row">
+          <button  title="Andamento medio nel tempo fonte per fonte"  class="button star" (click)="makeDbScanQuery('dbScan')">
+            <span>DBSCAN</span>
+          </button>
+          <div class="column">
+            <p>ε: {{epsilon}}</p>
+            <p>Cluster minimi: {{min_samples}}</p>
+          </div>
+        </div>
+
+        <p>ε: <input type="number" #epsi (keyup.enter)="updateEpsilon(epsi.value)" (blur)="updateEpsilon(epsi.value)"></p>
+        <p>min: <input type="number" #m_s (keyup.enter)="updateMin_samples(m_s.value)" (blur)="updateMin_samples(m_s.value)"> </p>
+      </div>
+      <!-- <p  class="oneStateQueryParag visible error">^ è possibile chiamare questa query selezionando uno e un solo stato</p> -->
     </section>
   </section>
 

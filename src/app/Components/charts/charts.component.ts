@@ -27,6 +27,20 @@ export class ChartsComponent implements OnInit {
 
 
   }
+  colorMapClusterLabel:any={
+    "0":"rgba(0, 255, 0, 0.5)",
+    "1":"rgba(164, 66, 0, 0.5)",
+    "2":"rgba(213,137, 54, 0.5)",
+    "3":"rgba(60, 21, 24, 0.5)",
+    "4":"rgba(174, 212, 230, 0.5)",
+    "5":"rgba(13, 33, 73, 0.5)",
+    "6":"rgba(255, 159, 28, 0.5)",
+    "7":"rgba(255, 159, 28, 0.5)",
+    "8":"rgba(173,168, 182, 0.5)",
+    "9":"rgba(37,48, 49, 0.5)",
+    "10":"rgba(0, 0, 0, 0.5)",
+    "11":"rgba(240, 162, 2, 0.5)",
+  }
 
 
   @Input("value") value!:any;
@@ -60,6 +74,17 @@ export class ChartsComponent implements OnInit {
       }
       else if(value.func==="addValueLineStacked"){
         this.addValueLineStacked(value.value,value.columnLabel,value.fontLabel);
+      }
+      else if(value.func==="initLineUnstackedGraph"){
+        let data=this.initLineStackedData(value.value);
+        this.initLineUnstackedGraph(data);
+      }
+      else if(value.func==="initBubbleGraph"){
+        let data=this.initLineStackedData(value.value);
+        this.initBubblesGraph(data);
+      }
+      else if(value.func==="addValueBubbleGraph"){
+        this.addValueBubbles(value.value,value.clusterLabel,value.bubbleLabel);
       }
 
 
@@ -100,6 +125,14 @@ export class ChartsComponent implements OnInit {
     this.myChart.destroy()
     this.myChart = new Chart("sparkChart",this.getInitLineStackedGraph(data) as any);
   }
+  initLineUnstackedGraph(data:any){
+    this.myChart.destroy()
+    this.myChart = new Chart("sparkChart",this.getInitLineUnstackedGraph(data) as any);
+  }
+  initBubblesGraph(data:any){
+    this.myChart.destroy()
+    this.myChart = new Chart("sparkChart",this.getInitBubblesGraph(data) as any);
+  }
 
   clear(){
     this.myChart.destroy()
@@ -136,19 +169,8 @@ export class ChartsComponent implements OnInit {
   addValueLineStacked(value:any,columnlabel:any,fontLabel:any){
 
     for(let i=0;i<value.length;i++){
-      /* if(this.myChart.data.datasets[i]){
-        this.myChart.data.datasets.push({
-          label: [fontLabel[i]],
-          data:[value[i]],
-          backgroundColor: [this.colorMapFonti[fontLabel[i].split("_")[0]]],
-          fill:true
-        })
 
-      console.log("dopo",this.myChart)
-      this.myChart.update();
-      } */
       this.myChart.data.datasets[i].data.push(value[i])
-
       this.myChart.data.datasets[i].backgroundColor.push(this.colorMapFonti[fontLabel[i].split("_")[0]])
       /* this.myChart.data.datasets[i].borderColor.push(borderColor) */
       this.myChart.data.datasets[i].label=fontLabel[i];
@@ -157,6 +179,20 @@ export class ChartsComponent implements OnInit {
     this.myChart.data.labels.push(columnlabel)
     this.myChart.update()
   }
+
+  addValueBubbles(value:any,clusterLabel:any,bubbleLabel:any){
+    console.log(clusterLabel);
+    console.log(bubbleLabel);
+    for(let i=0;i<value.length;i++){
+
+      this.myChart.data.datasets[i].data.push(value[i])
+      this.myChart.data.datasets[i].backgroundColor.push(this.colorMapClusterLabel[clusterLabel[i]])
+      /* this.myChart.data.datasets[i].borderColor.push(borderColor) */
+      this.myChart.data.datasets[i].label=bubbleLabel[i];
+    }
+    this.myChart.update()
+  }
+
   initLineStackedData(value:any){
     let data:any=[]
     for(let i=0;i<value.length;i++){
@@ -232,17 +268,57 @@ export class ChartsComponent implements OnInit {
         },
         scales: {
           x: {
-            title: {
+            /* title: {
               display: true,
-              text: 'Month'
-            }
+              text: 'Ore',
+              font: {
+                color:"rgb(0,0,0)",
+                size: 25
+              }
+            } */
           },
           y: {
             stacked: true,
-            title: {
+            beginAtZero: true
+          }
+        }
+      }
+    }
+    return initBarConfig;
+  }
+  getInitLineUnstackedGraph(data:any):any{
+    let initBarConfig:any={
+      type: 'line',
+      data:{
+        labels: [],
+        datasets: data,
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          tooltip: {
+            mode: 'index'
+          },
+        },
+        interaction: {
+          mode: 'nearest',
+          axis: 'x',
+          intersect: false
+        },
+        scales: {
+          x: {
+            /* title: {
               display: true,
-              text: 'Value'
-            }
+              text: 'Ore',
+              font: {
+                color:"rgb(0,0,0)",
+                size: 25
+              }
+            } */
+          },
+          y: {
+            stacked: false,
+            beginAtZero: true
           }
         }
       }
@@ -250,6 +326,18 @@ export class ChartsComponent implements OnInit {
     return initBarConfig;
   }
 
+  getInitBubblesGraph(data:any):any{
+    let initBubbleConfig:any={
+      type: 'bubble',
+      data:{
+        labels: [],
+        datasets: data,
+      },
+      options: {
+      }
+    }
+    return initBubbleConfig;
+  }
 
 
 
