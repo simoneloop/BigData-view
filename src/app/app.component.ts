@@ -207,7 +207,7 @@ export class AppComponent {
         }
         res+=k+"="+params[k]+"&"
       }
-      return res
+      return res.substring(0,res.length-1)
     }
     else{
       return undefined;
