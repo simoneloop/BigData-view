@@ -38,6 +38,7 @@ export class AppComponent {
 
   }
 
+  TIME_TO_LOAD=1000
 
 
 
@@ -442,19 +443,25 @@ makeSimpleQuery(address_service:String, event?:any){
       this.animationIs("received")
       this.animationIs("loading")
 
-      await new Promise(f => setTimeout(f, 1200));
+      await new Promise(f => setTimeout(f, this.TIME_TO_LOAD));
       this.response=data;
-      if(firstTime){
-        this.initSimpleGrapf()
-        firstTime=false;
-      }
-      this.response.forEach((element: { [x: string]: any; }) => {
+      try{
+        if(firstTime){
+          this.initSimpleGrapf()
+          firstTime=false;
+        }
+        this.response.forEach((element: { [x: string]: any; }) => {
 
-        let red=Math.floor(Math.random() * 256)
-        let green=Math.floor(Math.random() * 256)
-        let blue=Math.floor(Math.random() * 256)
-        this.addValueToGraph(element[valueToTake],element['value'],element['label'],"rgba("+red+","+green+","+blue+",0.2)","rgba("+red+","+green+","+blue+",1)")});
+          let red=Math.floor(Math.random() * 256)
+          let green=Math.floor(Math.random() * 256)
+          let blue=Math.floor(Math.random() * 256)
+          this.addValueToGraph(element[valueToTake],element['value'],element['label'],"rgba("+red+","+green+","+blue+",0.2)","rgba("+red+","+green+","+blue+",1)")});
+
+      }finally{
         this.animationIs("stop")
+      }
+
+
 
     })();
 
@@ -482,18 +489,23 @@ makeComplexQuery(address_service:String, event?:any){
       this.animationIs("received")
       this.animationIs("loading")
 
-      await new Promise(f => setTimeout(f, 1200));
+      await new Promise(f => setTimeout(f, this.TIME_TO_LOAD));
       this.initBarGrapf();
       this.response=data;
-      this.response.forEach((element: { [x: string]: any; }) => {
-      if(firstTime){
-        this.initSimpleGrapf(this.response)
-        firstTime=false;
+      try{
+        this.response.forEach((element: { [x: string]: any; }) => {
+          if(firstTime){
+            this.initSimpleGrapf(this.response)
+            firstTime=false;
 
+          }
+
+          this.addValueToGraphStacked(element[valueToTake],element['value'],element['label'])});
+      }finally{
+        this.animationIs("stop")
       }
 
-      this.addValueToGraphStacked(element[valueToTake],element['value'],element['label'])});
-      this.animationIs("stop")
+
 
     })();
 
@@ -557,7 +569,7 @@ makeLineComplexQuery(address_service:String,stacked:boolean, event?:any){
         this.animationIs("received")
         this.animationIs("loading")
 
-        await new Promise(f => setTimeout(f, 1200));
+        await new Promise(f => setTimeout(f, this.TIME_TO_LOAD));
         this.response=data;
 
         try {
@@ -608,18 +620,23 @@ makeDbScanQuery(address_service:String, event?:any){
       this.animationIs("received")
       this.animationIs("loading")
 
-      await new Promise(f => setTimeout(f, 1200));
+      await new Promise(f => setTimeout(f, this.TIME_TO_LOAD));
+
       this.response=data;
+      try{
+        this.response.forEach((element: { [x: string]: any; }) => {
 
-      this.response.forEach((element: { [x: string]: any; }) => {
+          if(firstTime){
+            this.initBubbleGraph(element['value'])
+            firstTime=false;
 
-      if(firstTime){
-        this.initBubbleGraph(element['value'])
-        firstTime=false;
-
+          }
+          this.addValueToBubbleGraph(element['label'],element['value'],element[valueToTake])});
+      }finally{
+        this.animationIs("stop")
       }
-      this.addValueToBubbleGraph(element['label'],element['value'],element[valueToTake])});
-      this.animationIs("stop")
+
+
 
     })();
 
