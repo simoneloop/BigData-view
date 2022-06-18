@@ -166,7 +166,7 @@ export class AppComponent {
     toSend.func="addValue";
     toSend.value=value;
     toSend.backgroundColor=backgroundColor?backgroundColor:"rgba(255, 99, 132, 0.2)"
-    toSend.borderColor=borderColor?borderColor:"rgba(255, 99, 132, 1)"
+    toSend.borderColor=borderColor?borderColor:"rgba(0,0,0, 1)"
     toSend.label=label
     toSend.datasetLabel=datasetLabel?datasetLabel:"query"
     this.SharedService.sendClickEvent(toSend);
@@ -381,6 +381,7 @@ getSelectedStates(){
     }
 
   });
+  /* if(selectedStates[0]==="SELEZIONA TUTTI GLI STATI"){selectedStates.shift()} */
   return selectedStates;
 }
 getSelectedFonts(){
@@ -391,7 +392,7 @@ getSelectedFonts(){
     }
 
   });
-  if(selectedFonts[0]==="SELEZIONA TUTTE LE FONTI"){selectedFonts.shift()}
+  /* if(selectedFonts[0]==="SELEZIONA TUTTE LE FONTI"){selectedFonts.shift()} */
 
   return selectedFonts;
 }
@@ -403,7 +404,9 @@ getSelectedTimeSlots(){
       selectedTimeSlots.push(element.name.split(' ')[0])
     }
 
+
   });
+  /* if(selectedTimeSlots[0]==="TUTTO"){selectedTimeSlots.shift()} */
   return selectedTimeSlots;
 }
 selectButton(event:any){
@@ -419,9 +422,7 @@ selectButton(event:any){
 
 makeSimpleQuery(address_service:String, event?:any){
   this.selectButton(event)
-
-  document.getElementsByClassName("from-angular-to-spark")[0].classList.remove("hide")
-  document.getElementsByClassName("arrow-logo")[0].classList.add("animation-pulse")
+  this.animationIs("sending")
 
   let params:any={}
   params.tipo=this.stato_is_checked?"stati":"sotto_stati"
@@ -431,37 +432,41 @@ makeSimpleQuery(address_service:String, event?:any){
   params.fascia_oraria="["+this.getSelectedTimeSlots()+"]"
 
 
-  document.getElementsByClassName("arrow-logo")[0].classList.remove("animation-pulse")
-  document.getElementsByClassName("arrow-logo")[0].classList.add("animation-pulseReverse")
+  this.animationIs("receiving")
 
 
   let firstTime=true;
   this.makeGetRequest(address_service,params).subscribe(data => {
+    (async () => {
+
+      this.animationIs("received")
+      this.animationIs("loading")
+
+      await new Promise(f => setTimeout(f, 1200));
+      this.response=data;
+      if(firstTime){
+        this.initSimpleGrapf()
+        firstTime=false;
+      }
+      this.response.forEach((element: { [x: string]: any; }) => {
+
+        let red=Math.floor(Math.random() * 256)
+        let green=Math.floor(Math.random() * 256)
+        let blue=Math.floor(Math.random() * 256)
+        this.addValueToGraph(element[valueToTake],element['value'],element['label'],"rgba("+red+","+green+","+blue+",0.2)","rgba("+red+","+green+","+blue+",1)")});
+        this.animationIs("stop")
+
+    })();
 
 
-    document.getElementsByClassName("arrow-logo")[0].classList.remove("animation-pulseReverse");
-    document.getElementsByClassName("from-angular-to-spark")[0].classList.add("hide");
 
-   /*  this.initBarGrapf(); */this.response=data;
-   console.log(this.response)
-   if(firstTime){
-    this.initSimpleGrapf()
-    firstTime=false;
-
-  }
-   this.response.forEach((element: { [x: string]: any; }) => {
-
-    let red=Math.floor(Math.random() * 256)
-    let green=Math.floor(Math.random() * 256)
-    let blue=Math.floor(Math.random() * 256)
-    this.addValueToGraph(element[valueToTake],element['value'],element['label'],"rgba("+red+","+green+","+blue+",0.2)","rgba("+red+","+green+","+blue+",1)")});
   })
 }
 
 
 makeComplexQuery(address_service:String, event?:any){
   this.selectButton(event)
-
+  this.animationIs("sending")
   let params:any={}
   params.tipo=this.stato_is_checked?"stati":"sotto_stati"
   let valueToTake="stato"
@@ -470,37 +475,65 @@ makeComplexQuery(address_service:String, event?:any){
   params.fascia_oraria="["+this.getSelectedTimeSlots()+"]"
   params.fonti="["+this.getSelectedFonts()+"]"
   let firstTime=true;
-  this.makeGetRequest(address_service,params).subscribe(data => {console.log("data",data); this.initBarGrapf();this.response=data; console.log("data",this.response);this.response.forEach((element: { [x: string]: any; }) => {
-    if(firstTime){
-      this.initSimpleGrapf(this.response)
-      firstTime=false;
+  this.animationIs("receiving")
+  this.makeGetRequest(address_service,params).subscribe(data => {
 
-    }
+    (async () => {
+      this.animationIs("received")
+      this.animationIs("loading")
 
-    this.addValueToGraphStacked(element[valueToTake],element['value'],element['label'])});
+      await new Promise(f => setTimeout(f, 1200));
+      this.initBarGrapf();
+      this.response=data;
+      this.response.forEach((element: { [x: string]: any; }) => {
+      if(firstTime){
+        this.initSimpleGrapf(this.response)
+        firstTime=false;
+
+      }
+
+      this.addValueToGraphStacked(element[valueToTake],element['value'],element['label'])});
+      this.animationIs("stop")
+
+    })();
+
+
+
+
+
+
+
   })
 }
 animationIs(value:String){
-  if(value==="sending"){
-    document.getElementsByClassName("from-angular-to-spark")[0].classList.remove("hide")
-    document.getElementsByClassName("arrow-logo")[0].classList.add("animation-pulse")
-  }
-  else if(value==="receiving"){
-    document.getElementsByClassName("arrow-logo")[0].classList.remove("animation-pulse")
-    document.getElementsByClassName("arrow-logo")[0].classList.add("animation-pulseReverse")
-  }
-  else if(value==="received"){
-    document.getElementsByClassName("arrow-logo")[0].classList.remove("animation-pulseReverse");
-    document.getElementsByClassName("from-angular-to-spark")[0].classList.add("hide");
-  }
-  else if(value==="loading"){
-    document.getElementsByClassName("angular-updating")[0].classList.remove("hide");
-    document.getElementsByClassName("angular-updating")[0].classList.add("flexible");
-  }
-  else{
-    document.getElementsByClassName("angular-updating")[0].classList.remove("flexible");
-    document.getElementsByClassName("angular-updating")[0].classList.add("hide");
-  }
+  (async () => {
+    // Do something before delay
+    if(value==="sending"){
+      document.getElementsByClassName("from-angular-to-spark")[0].classList.remove("hide")
+      document.getElementsByClassName("arrow-logo")[0].classList.add("animation-pulse")
+
+    }
+    else if(value==="receiving"){
+
+      document.getElementsByClassName("arrow-logo")[0].classList.remove("animation-pulse")
+      document.getElementsByClassName("arrow-logo")[0].classList.add("animation-pulseReverse")
+    }
+    else if(value==="received"){
+      document.getElementsByClassName("arrow-logo")[0].classList.remove("animation-pulseReverse");
+      document.getElementsByClassName("from-angular-to-spark")[0].classList.add("hide");
+    }
+    else if(value==="loading"){
+      document.getElementsByClassName("angular-updating")[0].classList.remove("hide");
+      document.getElementsByClassName("angular-updating")[0].classList.add("flexible");
+
+    }
+    else{
+      document.getElementsByClassName("angular-updating")[0].classList.remove("flexible");
+      document.getElementsByClassName("angular-updating")[0].classList.add("hide");
+    }
+    await new Promise(f => setTimeout(f, 1200));
+  })();
+
 }
 makeLineComplexQuery(address_service:String,stacked:boolean, event?:any){
 
@@ -519,28 +552,36 @@ makeLineComplexQuery(address_service:String,stacked:boolean, event?:any){
 
     this.animationIs("receiving")
     this.makeGetRequest(address_service,params).subscribe(data => {
-      this.animationIs("received")
-      console.log("received")
-      /* this.animationIs("loading") */
 
-      this.response=data;
-      console.log("risposta",this.response);
-      let cont=0;
-      this.response.forEach((element: { [x: string]: any; }) => {
-      cont++;
-      if(firstTime){
-        if(stacked){
-          this.initLineStackedGraph(element['value'])
+      (async () => {
+        this.animationIs("received")
+        this.animationIs("loading")
 
+        await new Promise(f => setTimeout(f, 1200));
+        this.response=data;
+
+        try {
+          this.response.forEach((element: { [x: string]: any; }) => {
+            if(firstTime){
+              if(stacked){
+                this.initLineStackedGraph(element['value'])
+
+              }
+              else{
+                this.initLineUnstackedGraph(element['value'])
+              }
+              firstTime=false;
+
+            }
+            this.addValueToGraphLineStacked(element[valueToTake],element['value'],element['label'])});
         }
-        else{
-          this.initLineUnstackedGraph(element['value'])
+        finally {
+          this.animationIs("stop")
         }
-        firstTime=false;
 
-      }
-      this.addValueToGraphLineStacked(element[valueToTake],element['value'],element['label'])});
-      /* this.animationIs("stop") */
+        })();
+
+
     })
 
   }
@@ -562,21 +603,32 @@ makeDbScanQuery(address_service:String, event?:any){
 
   this.animationIs("receiving")
   this.makeGetRequest(address_service,params).subscribe(data => {
-    this.animationIs("received")
-    /* this.animationIs("loading") */
 
-    this.response=data;
+    (async () => {
+      this.animationIs("received")
+      this.animationIs("loading")
 
-    this.response.forEach((element: { [x: string]: any; }) => {
+      await new Promise(f => setTimeout(f, 1200));
+      this.response=data;
 
-    if(firstTime){
-      this.initBubbleGraph(element['value'])
-      firstTime=false;
+      this.response.forEach((element: { [x: string]: any; }) => {
 
-    }
-    console.log(element)
-    this.addValueToBubbleGraph(element['label'],element['value'],element[valueToTake])});
-    /* this.animationIs("stop") */
+      if(firstTime){
+        this.initBubbleGraph(element['value'])
+        firstTime=false;
+
+      }
+      this.addValueToBubbleGraph(element['label'],element['value'],element[valueToTake])});
+      this.animationIs("stop")
+
+    })();
+
+
+
+
+
+
+
   })
 
 
