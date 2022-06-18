@@ -51,7 +51,7 @@ export class AppComponent {
 /*   timeSlots=[{select:true,name:'TUTTO IL GIORNO',class:"checkbox-title spaceBottom"},{select:true,name:'mattina'},{select:true,name:'pomeriggio'},{select:true,name:'sera'},{select:true,name:'notte'}]
  */
   epsilon =0.3;
-  min_samples = 2;
+  min_samples = 1;
   response:any;
   statesToShow:any;
 
@@ -59,9 +59,16 @@ export class AppComponent {
   ngOnInit(){
     this.initValueFromBackend()
   }
+  initSimpleGrapf(value?:any){
+    let toSend:any={}
+    toSend.func="initSimple";
+    toSend.value=value?value:null;
+    this.SharedService.sendClickEvent(toSend);
+  }
   initBarGrapf(){
     let toSend:any={};
     toSend.func="clear";
+
     this.SharedService.sendClickEvent(toSend);
   }
   initLineStackedGraph(value: any){
@@ -83,6 +90,7 @@ export class AppComponent {
     this.SharedService.sendClickEvent(toSend);
   }
   clearGraph(){
+    this.selectButton(-1)
     let toSend:any={};
     toSend.func="default";
     this.SharedService.sendClickEvent(toSend);
@@ -313,7 +321,7 @@ recap(value: any){
 
 
 onChangeFormStates($event: any){
-  console.log($event)
+
   if($event.value==2){
     this.statesToShow=this.initMap.SOTTO_STATI
     this.stato_is_checked=false;
@@ -405,7 +413,8 @@ selectButton(event:any){
   for(let i=0;i<list.length;i++){
     list[i].classList.remove("selected-btn")
   }
-  event.target.setAttribute("class",event.target.getAttribute("class")+" selected-btn")
+  if(event!=-1){event.target.setAttribute("class",event.target.getAttribute("class")+" selected-btn")}
+
 }
 
 makeSimpleQuery(address_service:String, event?:any){
@@ -426,17 +435,26 @@ makeSimpleQuery(address_service:String, event?:any){
   document.getElementsByClassName("arrow-logo")[0].classList.add("animation-pulseReverse")
 
 
-
+  let firstTime=true;
   this.makeGetRequest(address_service,params).subscribe(data => {
+
 
     document.getElementsByClassName("arrow-logo")[0].classList.remove("animation-pulseReverse");
     document.getElementsByClassName("from-angular-to-spark")[0].classList.add("hide");
 
-    this.initBarGrapf();this.response=data;this.response.forEach((element: { [x: string]: any; }) => {
+   /*  this.initBarGrapf(); */this.response=data;
+   console.log(this.response)
+   if(firstTime){
+    this.initSimpleGrapf()
+    firstTime=false;
+
+  }
+   this.response.forEach((element: { [x: string]: any; }) => {
+
     let red=Math.floor(Math.random() * 256)
     let green=Math.floor(Math.random() * 256)
     let blue=Math.floor(Math.random() * 256)
-    this.addValueToGraph(element[valueToTake],element['value'],element['label'],"rgba("+red+","+green+","+blue+",0.5)","rgba(100,100,100,1)")});
+    this.addValueToGraph(element[valueToTake],element['value'],element['label'],"rgba("+red+","+green+","+blue+",0.2)","rgba("+red+","+green+","+blue+",1)")});
   })
 }
 
@@ -451,8 +469,13 @@ makeComplexQuery(address_service:String, event?:any){
   params.giorni="["+this.initMap.QUERY_TIME+"]"
   params.fascia_oraria="["+this.getSelectedTimeSlots()+"]"
   params.fonti="["+this.getSelectedFonts()+"]"
+  let firstTime=true;
   this.makeGetRequest(address_service,params).subscribe(data => {console.log("data",data); this.initBarGrapf();this.response=data; console.log("data",this.response);this.response.forEach((element: { [x: string]: any; }) => {
+    if(firstTime){
+      this.initSimpleGrapf(this.response)
+      firstTime=false;
 
+    }
 
     this.addValueToGraphStacked(element[valueToTake],element['value'],element['label'])});
   })
@@ -524,6 +547,7 @@ makeLineComplexQuery(address_service:String,stacked:boolean, event?:any){
 
 }
 makeDbScanQuery(address_service:String, event?:any){
+  this.selectButton(-1)
   this.animationIs("sending")
   let params:any={}
   params.eps=this.epsilon.toString();
