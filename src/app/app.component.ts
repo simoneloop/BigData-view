@@ -37,6 +37,7 @@ export class AppComponent {
 
 
   }
+  bad_request_message="OPS! RICHIESTA ERRATA?  Per le query verdi è necessario selezionare almeno uno stato e almeno un giorno con la sua fascia oraria. Per tutte le altre query ricorda di selezionare anche almeno una fonte."
 
   TIME_TO_LOAD=1000
 
@@ -95,6 +96,19 @@ export class AppComponent {
     let toSend:any={};
     toSend.func="default";
     this.SharedService.sendClickEvent(toSend);
+  }
+
+  badRequest(){
+
+    this.selectButton(-1)
+    let toSend:any={};
+    toSend.func="badRequest";
+    this.SharedService.sendClickEvent(toSend);
+    (async () => {
+      await new Promise(f => setTimeout(f, 1200));
+      alert(this.bad_request_message)
+    })();
+
   }
 
   initValueFromBackend(){
@@ -393,7 +407,7 @@ getSelectedFonts(){
     }
 
   });
-  /* if(selectedFonts[0]==="SELEZIONA TUTTE LE FONTI"){selectedFonts.shift()} */
+  if(selectedFonts[0]==="SELEZIONA TUTTE LE FONTI"){selectedFonts.shift()}
 
   return selectedFonts;
 }
@@ -445,18 +459,26 @@ makeSimpleQuery(address_service:String, event?:any){
 
       await new Promise(f => setTimeout(f, this.TIME_TO_LOAD));
       this.response=data;
+      console.log("ricevuto",this.response)
       try{
-        if(firstTime){
-          this.initSimpleGrapf()
-          firstTime=false;
+        if(this.response.length>0){
+          if(firstTime){
+            this.initSimpleGrapf()
+            firstTime=false;
+          }
+          this.response.forEach((element: { [x: string]: any; }) => {
+
+            let red=Math.floor(Math.random() * 256)
+            let green=Math.floor(Math.random() * 256)
+            let blue=Math.floor(Math.random() * 256)
+            this.addValueToGraph(element[valueToTake],element['value'],element['label'],"rgba("+red+","+green+","+blue+",0.2)","rgba("+red+","+green+","+blue+",1)")});
         }
-        this.response.forEach((element: { [x: string]: any; }) => {
-
-          let red=Math.floor(Math.random() * 256)
-          let green=Math.floor(Math.random() * 256)
-          let blue=Math.floor(Math.random() * 256)
-          this.addValueToGraph(element[valueToTake],element['value'],element['label'],"rgba("+red+","+green+","+blue+",0.2)","rgba("+red+","+green+","+blue+",1)")});
-
+        else{
+          this.badRequest()
+        }
+      }
+      catch{
+        this.badRequest()
       }finally{
         this.animationIs("stop")
       }
@@ -492,7 +514,9 @@ makeComplexQuery(address_service:String, event?:any){
       await new Promise(f => setTimeout(f, this.TIME_TO_LOAD));
       this.initBarGrapf();
       this.response=data;
+      console.log("ricevuto",this.response)
       try{
+        if(this.response.length>0){
         this.response.forEach((element: { [x: string]: any; }) => {
           if(firstTime){
             this.initSimpleGrapf(this.response)
@@ -501,6 +525,12 @@ makeComplexQuery(address_service:String, event?:any){
           }
 
           this.addValueToGraphStacked(element[valueToTake],element['value'],element['label'])});
+        }
+        else{
+          this.badRequest()
+        }
+      }catch{
+        this.badRequest()
       }finally{
         this.animationIs("stop")
       }
@@ -573,19 +603,26 @@ makeLineComplexQuery(address_service:String,stacked:boolean, event?:any){
         this.response=data;
 
         try {
-          this.response.forEach((element: { [x: string]: any; }) => {
-            if(firstTime){
-              if(stacked){
-                this.initLineStackedGraph(element['value'])
+          if(this.response.length>0){
+            this.response.forEach((element: { [x: string]: any; }) => {
+              if(firstTime){
+                if(stacked){
+                  this.initLineStackedGraph(element['value'])
+
+                }
+                else{
+                  this.initLineUnstackedGraph(element['value'])
+                }
+                firstTime=false;
 
               }
-              else{
-                this.initLineUnstackedGraph(element['value'])
-              }
-              firstTime=false;
-
-            }
-            this.addValueToGraphLineStacked(element[valueToTake],element['value'],element['label'])});
+              this.addValueToGraphLineStacked(element[valueToTake],element['value'],element['label'])});
+          }
+          else{
+            this.badRequest()
+          }
+        }catch{
+          this.badRequest()
         }
         finally {
           this.animationIs("stop")
@@ -624,6 +661,7 @@ makeDbScanQuery(address_service:String, event?:any){
 
       this.response=data;
       try{
+        if(this.response.length>0){
         this.response.forEach((element: { [x: string]: any; }) => {
 
           if(firstTime){
@@ -632,6 +670,13 @@ makeDbScanQuery(address_service:String, event?:any){
 
           }
           this.addValueToBubbleGraph(element['label'],element['value'],element[valueToTake])});
+        }
+        else{
+          this.badRequest()
+
+        }
+      }catch{
+        this.badRequest()
       }finally{
         this.animationIs("stop")
       }
@@ -682,6 +727,9 @@ saveSelectedTime(value:string){
   this.initMap.QUERY_TIME=[];
   for(let i=0;i<numD;i++){
     this.initMap.QUERY_TIME.push(inizio+(i*86400))
+  }
+  if(this.initMap.QUERY_TIME.length>10){
+    alert("Attenzione con un range di date molto ampio le query con distribuzione nel tempo(rosse), subiranno rallentamenti durante la graficazione")
   }
 
 }
