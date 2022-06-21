@@ -10,7 +10,7 @@ import { Subscription } from 'rxjs';
 })
 
 export class ChartsComponent implements OnInit {
-
+  bad_request_message="OPS! RICHIESTA ERRATA?  Per le query verdi è necessario selezionare almeno uno stato e almeno un giorno con la sua fascia oraria. Per tutte le altre query ricorda di selezionare anche almeno una fonte."
   colorMapFonti:any={
     "nucleare":"rgba(0, 255, 0, 0.5)",
     "geotermico":"rgba(164, 66, 0, 0.5)",
@@ -150,7 +150,6 @@ export class ChartsComponent implements OnInit {
   initSimpleGraph(data:any){
     this.myChart.destroy();
     this.myChart=new Chart("sparkChart",this.getInitBarChart(data) as any)
-    console.log(this.myChart)
   }
 
   clear(data:any){
@@ -200,12 +199,10 @@ export class ChartsComponent implements OnInit {
   }
 
   addValueBubbles(value:any,clusterLabel:any,bubbleLabel:any){
-    console.log(clusterLabel);
-    console.log(bubbleLabel);
+
     for(let i=0;i<value.length;i++){
 
       this.myChart.data.datasets[i].data.push(value[i])
-      if(clusterLabel[i]==-1){console.log(this.colorMapClusterLabel[clusterLabel[i]])}
       this.myChart.data.datasets[i].backgroundColor.push(this.colorMapClusterLabel[clusterLabel[i]])
       /* this.myChart.data.datasets[i].borderColor.push(borderColor) */
       this.myChart.data.datasets[i].label=bubbleLabel[i];
@@ -222,9 +219,6 @@ export class ChartsComponent implements OnInit {
           backgroundColor: [],
           fill:true
         })
-
-      /* console.log("dopo",this.myChart)
-      this.myChart.update(); */
       }
     return data;
 
@@ -408,8 +402,15 @@ export class ChartsComponent implements OnInit {
       options:{}
     }
     if(this.myChart){this.myChart.destroy()}
+    (async () => {
+      this.myChart = new Chart("sparkChart",initConfig as any);
 
-    this.myChart = new Chart("sparkChart",initConfig as any);
+      await new Promise(f => setTimeout(f,800));
+
+      alert(this.bad_request_message)
+    })();
+
+
   }
 
 }

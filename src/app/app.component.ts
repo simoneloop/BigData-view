@@ -37,7 +37,7 @@ export class AppComponent {
 
 
   }
-  bad_request_message="OPS! RICHIESTA ERRATA?  Per le query verdi è necessario selezionare almeno uno stato e almeno un giorno con la sua fascia oraria. Per tutte le altre query ricorda di selezionare anche almeno una fonte."
+
 
   TIME_TO_LOAD=1000
 
@@ -106,7 +106,7 @@ export class AppComponent {
     this.SharedService.sendClickEvent(toSend);
     (async () => {
       await new Promise(f => setTimeout(f, 1200));
-      alert(this.bad_request_message)
+
     })();
 
   }
@@ -427,7 +427,7 @@ getSelectedTimeSlots(){
 selectButton(event:any){
 
   let list=document.getElementsByTagName("button")
-  console.log("list",list)
+
   for(let i=0;i<list.length;i++){
     list[i].classList.remove("selected-btn")
   }
@@ -601,7 +601,7 @@ makeLineComplexQuery(address_service:String,stacked:boolean, event?:any){
 
         await new Promise(f => setTimeout(f, this.TIME_TO_LOAD));
         this.response=data;
-
+        console.log("ricevuto",this.response)
         try {
           if(this.response.length>0){
             this.response.forEach((element: { [x: string]: any; }) => {
@@ -709,7 +709,7 @@ updateMin_samples(value: string) {
 }
 makeGetRequest(address_service:String,params:any){
 
-  console.log(params)
+  
   let httpParams=this.getParams(params)
   console.log(httpParams)
 
